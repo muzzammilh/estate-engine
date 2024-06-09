@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from .models import User
 
+
 class UserChangeForm(UserChangeForm):
     class Meta:
         model = User
@@ -13,6 +14,7 @@ class UserChangeForm(UserChangeForm):
         if username and User.objects.filter(username=username).exists():
             raise forms.ValidationError("A user with that username already exists.")
         return username
+
 
 class UserCreationForm(UserCreationForm):
     class Meta:
