@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from config.models import BasedModel
 from .managers import UserManager
 
 
-class User(AbstractUser):
+class User(AbstractUser, BasedModel):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=150, blank=True, null=True)
 
