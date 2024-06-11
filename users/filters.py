@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import User
 
+
 class RoleFilter(admin.SimpleListFilter):
     title = 'role'
     parameter_name = 'role'
