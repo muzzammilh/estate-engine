@@ -22,7 +22,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2', 'role',),
+            'fields': ('email', 'password1', 'password2', 'role',),
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'is_staff')
