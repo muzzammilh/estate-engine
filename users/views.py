@@ -1,6 +1,6 @@
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from django.views.generic import CreateView, FormView, TemplateView
+from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
 from django.contrib.auth import login
 from .forms import UserRegistrationForm, UserLoginForm, CustomPasswordResetForm, CustomSetPasswordForm
@@ -14,7 +14,7 @@ class UserRegisterView(CreateView):
     success_url = reverse_lazy('landlord_dashboard')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
+        super().form_valid(form)
         user = form.save()
         login(self.request, user)
         if user.role == User.LANDLORD:
@@ -51,8 +51,10 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy('password_reset_complete')
     form_class = CustomSetPasswordForm
 
+
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'users/password_reset_complete.html'
+
 
 class LandlordDashboardView(TemplateView):
     template_name = 'dashboard/landlord_dashboard.html'
