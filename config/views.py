@@ -13,7 +13,7 @@ class HomePageView(TemplateView):
 
 def LoggingExampleView(request):
     # Log a simple string message
-    logger.warn('This is an info message from LoggingExampleView')
+    logger.info('This is an info message from LoggingExampleView')
 
     # Log a dictionary
     logger.info({'user': 'admin', 'action': 'login', 'status': 'success'})

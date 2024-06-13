@@ -39,10 +39,10 @@ class UserLoginView(LoginView):
     def get_success_url(self):
         user = self.request.user
         if user.role == User.LANDLORD:
-            logger.info(f'User {user.username} logged in as landlord')
+            logger.info(f'User {user.email} logged in as landlord')
             return reverse_lazy('landlord_dashboard')
         else:
-            logger.info(f'User {user.username} logged in as tenant')
+            logger.info(f'User {user.email} logged in as tenant')
             return reverse_lazy('tenant_dashboard')
 
 
