@@ -98,6 +98,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, 'Your profile has been updated successfully.')
         return super().form_valid(form)
 
+
 class PasswordChangeView(LoginRequiredMixin, FormView):
     form_class = ProfilePasswordChangeForm
     template_name = 'dashboard/password_update.html'
