@@ -133,3 +133,42 @@ AUTH_USER_MODEL = 'users.User'
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] {asctime} - {filename}:{lineno} - {message}',
+            'style': '{',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'app.log'),
+            'when': 'midnight',  # Use 'when' for time-based rotation
+            'interval': 1,
+            'backupCount': 7,
+            'formatter': 'verbose',
+        },
+        # Alternatively, you can use RotatingFileHandler for size-based rotation
+        # 'file': {
+        #     'level': 'INFO',
+        #     'class': 'logging.handlers.RotatingFileHandler',
+        #     'filename': os.path.join(BASE_DIR, 'logs', 'app.log'),
+        #     'maxBytes': 1024 * 1024 * 5,  # 5 MB
+        #     'backupCount': 5,
+        #     'formatter': 'verbose',
+        # },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
