@@ -1,5 +1,11 @@
 from django import forms
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import (
+    UserChangeForm, UserCreationForm,
+    AuthenticationForm,
+    PasswordResetForm,
+    SetPasswordForm,
+    PasswordChangeForm
+)
 from .models import User
 
 
@@ -39,10 +45,26 @@ class UserLoginForm(AuthenticationForm):
     username = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
 
+# Used for forget password
 class CustomPasswordResetForm(PasswordResetForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
 
 
+# Used for forget password
 class CustomSetPasswordForm(SetPasswordForm):
     new_password1 = forms.CharField(label='New password', strip=False, widget=forms.PasswordInput)
     new_password2 = forms.CharField(label='Confirm new password', strip=False, widget=forms.PasswordInput)
+
+
+# Update profile
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
+
+
+# Used for password change via profile
+class ProfilePasswordChangeForm(PasswordChangeForm):
+    class Meta:
+        model = User
+        fields = ['old_password', 'new_password1', 'new_password2']

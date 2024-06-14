@@ -8,16 +8,24 @@
 <body>
     <header>
         <nav>
-            <a href="{% url 'register' %}">Register</a>
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'password_reset' %}">Forgot Password</a>
-            <form method="post" action="{% url 'logout' %}" style="display:inline;">
-                {% csrf_token %}
-                <a href type="submit">Logout</a>
-            </form>
+            {% if user.is_authenticated %}
+                Welcome, {{ user.email }}
+                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'register' %}">Register</a>
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'password_reset' %}">Forgot Password</a>
+            {% endif %}
         </nav>
     </header>
     <div class="container">
+        <h2>Welcome</h2>
+        <p>This is your dashboard.</p>
+        <a href="{% url 'profile_update' %}">Update Profile</a><br>
+        <a href="{% url 'password_change' %}">Change Password</a>
         <main>
             {% block content %}{% endblock %}
         </main>
