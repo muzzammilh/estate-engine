@@ -23,6 +23,13 @@
         {% for error in form.password.errors %}
           <div class="invalid-feedback">{{ error }}</div>
         {% endfor %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger mt-4">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
       </div>
       <button type="submit" class="btn btn-primary mt-4">Login</button>
     </fieldset>
