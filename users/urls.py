@@ -1,12 +1,11 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from .views import (
-    UserRegisterView, UserLoginView, UserLogoutView, CustomPasswordResetView,
-    CustomPasswordResetConfirmView, CustomPasswordResetCompleteView,
-    LandlordDashboardView, TenantDashboardView,
-    ProfileUpdateView, PasswordChangeView
-)
+from .views import (CustomPasswordResetCompleteView,
+                    CustomPasswordResetConfirmView, CustomPasswordResetView,
+                    LandlordDashboardView, PasswordChangeView,
+                    ProfileUpdateView, TenantDashboardView, UserLoginView,
+                    UserLogoutView, UserRegisterView)
 
 urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),

@@ -1,18 +1,20 @@
 import logging
-from django.urls import reverse_lazy
-from django.shortcuts import redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import update_session_auth_hash
-from django.contrib import messages
-from django.views.generic import CreateView, TemplateView, FormView, UpdateView
-from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.contrib.auth import login
-from .forms import (
-    UserRegistrationForm, UserLoginForm, CustomPasswordResetForm, CustomSetPasswordForm,
-    UserProfileForm, ProfilePasswordChangeForm
-)
-from .models import User
 
+from django.contrib import messages
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import (LoginView, LogoutView,
+                                       PasswordResetCompleteView,
+                                       PasswordResetConfirmView,
+                                       PasswordResetView)
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, FormView, TemplateView, UpdateView
+
+from .forms import (CustomPasswordResetForm, CustomSetPasswordForm,
+                    ProfilePasswordChangeForm, UserLoginForm, UserProfileForm,
+                    UserRegistrationForm)
+from .models import User
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
