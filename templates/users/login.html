@@ -1,35 +1,41 @@
-{% extends 'base.html' %}
-
-{% block title %}Login{% endblock %}
-
+{% extends "base.html" %}
+{% block title %}
+    Login
+{% endblock title %}
 {% block content %}
-  <h2>Login</h2>
-
-  <form method="post">
-    {% csrf_token %}
-    <fieldset>
-      {% if form.non_field_errors %}
-        <div class="alert alert-danger mt-4">
-          {% for error in form.non_field_errors %}
-            <p>{{ error }}</p>
-          {% endfor %}
-        </div>
-      {% endif %}
-      <div>
-        <label for="id_username" class="form-label mt-4">Email address</label>
-        <input type="text" name="username" maxlength="254" autofocus required class="form-control {% if form.username.errors %}is-invalid{% endif %}" id="id_username" aria-describedby="emailHelp" placeholder="Enter email" />
-        {% for error in form.username.errors %}
-          <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <div>
-        <label for="id_password" class="form-label mt-4">Password</label>
-        <input type="password" name="password" class="form-control {% if form.password.errors %}is-invalid{% endif %}" id="id_password" placeholder="Password" autocomplete="off" />
-        {% for error in form.password.errors %}
-          <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-      </div>
-      <button type="submit" class="btn btn-primary mt-4">Login</button>
-    </fieldset>
-  </form>
-{% endblock %}
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+        <fieldset>
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger mt-4">
+                    {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+                </div>
+            {% endif %}
+            <div>
+                <label for="id_username" class="form-label mt-4">Email address</label>
+                <input type="text"
+                       name="username"
+                       maxlength="254"
+                       autofocus
+                       required
+                       class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                       id="id_username"
+                       aria-describedby="emailHelp"
+                       placeholder="Enter email" />
+                {% for error in form.username.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label for="id_password" class="form-label mt-4">Password</label>
+                <input type="password"
+                       name="password"
+                       class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                       id="id_password"
+                       placeholder="Password"
+                       autocomplete="off" />
+                {% for error in form.password.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Login</button>
+        </fieldset>
+    </form>
+{% endblock content %}
