@@ -1,57 +1,69 @@
-{% extends 'base.html' %}
-
-{% block title %}Register{% endblock %}
-
+{% extends "base.html" %}
+{% block title %}
+    Register
+{% endblock title %}
 {% block content %}
-<h2>Register</h2>
-<!-- <form method="post">
+    <h2>Register</h2>
+    <!-- <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Register</button>
 </form> -->
-<form method="post">
-    {% csrf_token %}
-  <fieldset>
-    <div>
-      <label for="id_email" class="form-label mt-4">Email address</label>
-      <input type="email" name="email" maxlength="254" autofocus required class="form-control {% if form.email.errors %}is-invalid{% endif %}" id="id_email" aria-describedby="emailHelp" placeholder="Enter email">
-        {% for error in form.email.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-    </div>
-    <div>
-        <label for="id_role" class="form-label mt-4">Role</label>
-        <select name="role" class="form-select {% if form.role.errors %}is-invalid{% endif %}" id="id_role">
-        <option value="1">Landlord</option>
-        <option value="2">Tenant</option>
-        </select>
-        {% for error in form.role.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-    </div>
-    <div>
-      <label for="id_password1" class="form-label mt-4">Password</label>
-      <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" id="id_password1" placeholder="Password" autocomplete="off">
-        {% for error in form.password1.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-    </div>
-    <div class="alert alert-dismissible alert-light mt-4">
-        <ul>
-            <li>Your password can’t be too similar to your other personal information.</li>
-            <li>Your password must contain at least 8 characters.</li>
-            <li>Your password can’t be a commonly used password.</li>
-            <li>Your password can’t be entirely numeric.</li>
-        </ul>
-    </div>
-    <div>
-      <label for="id_password2" class="form-label mt-4">Password confirmation</label>
-      <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" id="id_password2" placeholder="Password" autocomplete="off">
-        {% for error in form.password2.errors %}
-            <div class="invalid-feedback">{{ error }}</div>
-        {% endfor %}
-    </div>
-    <button type="submit" class="btn btn-primary mt-4">Register</button>
-  </fieldset>
-</form>
-{% endblock %}
+    <form method="post">
+        {% csrf_token %}
+        <fieldset>
+            <div>
+                <label for="id_email" class="form-label mt-4">Email address</label>
+                <input type="email"
+                       name="email"
+                       maxlength="254"
+                       autofocus
+                       required
+                       class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+                       id="id_email"
+                       aria-describedby="emailHelp"
+                       placeholder="Enter email">
+                {% for error in form.email.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label for="id_role" class="form-label mt-4">Role</label>
+                <select name="role"
+                        class="form-select {% if form.role.errors %}is-invalid{% endif %}"
+                        id="id_role">
+                    <option value="1">Landlord</option>
+                    <option value="2">Tenant</option>
+                </select>
+                {% for error in form.role.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div>
+                <label for="id_password1" class="form-label mt-4">Password</label>
+                <input type="password"
+                       name="password1"
+                       class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                       id="id_password1"
+                       placeholder="Password"
+                       autocomplete="off">
+                {% for error in form.password1.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <div class="alert alert-dismissible alert-light mt-4">
+                <ul>
+                    <li>Your password can’t be too similar to your other personal information.</li>
+                    <li>Your password must contain at least 8 characters.</li>
+                    <li>Your password can’t be a commonly used password.</li>
+                    <li>Your password can’t be entirely numeric.</li>
+                </ul>
+            </div>
+            <div>
+                <label for="id_password2" class="form-label mt-4">Password confirmation</label>
+                <input type="password"
+                       name="password2"
+                       class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+                       id="id_password2"
+                       placeholder="Password"
+                       autocomplete="off">
+                {% for error in form.password2.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Register</button>
+        </fieldset>
+    </form>
+{% endblock content %}
