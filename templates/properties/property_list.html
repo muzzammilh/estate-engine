@@ -3,7 +3,7 @@
     <h2>My Properties</h2>
     <a href="{% url 'property_create' %}">Add Property</a>
     <ul>
-        {% for property in properties %}
+        {% for property in object_list %}
             <li>
                 <a href="{% url 'property_detail' property.pk %}">{{ property.name }}</a>
                 <a href="{% url 'property_update' property.pk %}">Edit</a>
