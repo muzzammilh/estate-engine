@@ -6,5 +6,8 @@ exclude =
     migrations,
     static,
     media,
-    venv
+    .venv
     .env
+
+per-file-ignores =
+    */migrations/*:E501
