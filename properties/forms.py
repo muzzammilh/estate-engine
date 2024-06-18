@@ -15,9 +15,6 @@ class PropertyForm(forms.ModelForm):
         model = Property
         fields = ['name', 'country', 'state', 'city', 'sub_locality', 'address', 'square_feet', 'description']
 
-    class Media:
-        js = ('js/cascade_dropdowns.js',)
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if 'country' in self.data:

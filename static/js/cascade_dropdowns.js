@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     countryField.addEventListener('change', function () {
         const countryId = this.value;
         if (countryId) {
-            updateDropdown(`/ajax/load-states/?country_id=${countryId}`, stateField, 'Select State');
+            updateDropdown(`/property/ajax/load-states/?country_id=${countryId}`, stateField, 'Select State');
         } else {
             stateField.innerHTML = '<option value="">Select State</option>';
             cityField.innerHTML = '<option value="">Select City</option>';
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
     stateField.addEventListener('change', function () {
         const stateId = this.value;
         if (stateId) {
-            updateDropdown(`/ajax/load-cities/?state_id=${stateId}`, cityField, 'Select City');
+            updateDropdown(`/property/ajax/load-cities/?state_id=${stateId}`, cityField, 'Select City');
         } else {
             cityField.innerHTML = '<option value="">Select City</option>';
             subLocalityField.innerHTML = '<option value="">Select Sub Locality</option>';
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     cityField.addEventListener('change', function () {
         const cityId = this.value;
         if (cityId) {
-            updateDropdown(`/ajax/load-sub-localities/?city_id=${cityId}`, subLocalityField, 'Select Sub Locality');
+            updateDropdown(`/property/ajax/load-sub-localities/?city_id=${cityId}`, subLocalityField, 'Select Sub Locality');
         } else {
             subLocalityField.innerHTML = '<option value="">Select Sub Locality</option>';
         }
