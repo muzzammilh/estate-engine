@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+<script src="{% static 'js/cascade_dropdowns.js' %}"></script>
+{% block content %}
+    <h2>{{ form.instance.pk|yesno:"Edit Property,Add Property" }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+{% endblock content %}

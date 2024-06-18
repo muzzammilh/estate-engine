@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>{{ property.name }}</h2>
+    <p>Country: {{ property.country }}</p>
+    <p>State: {{ property.state }}</p>
+    <p>City: {{ property.city }}</p>
+    <p>Sub Locality: {{ property.sub_locality }}</p>
+    <p>Address: {{ property.address }}</p>
+    <p>Square Feet: {{ property.square_feet }}</p>
+    <p>{{ property.description }}</p>
+    <a href="{% url 'unit_create' property.pk %}">Add Unit</a>
+    <ul>
+        {% for unit in property.units.all %}
+            <li>
+                Unit {{ unit.unit_number }}: {{ unit.description }}
+                <p>Beds: {{ unit.num_beds }}</p>
+                <p>Bathrooms: {{ unit.num_bathrooms }}</p>
+                <p>Kitchens: {{ unit.num_kitchens }}</p>
+                <p>Living Rooms: {{ unit.num_living_rooms }}</p>
+                <p>Stores: {{ unit.num_stores }}</p>
+                <a href="{% url 'unit_update' unit.pk %}">Edit</a>
+                <a href="{% url 'unit_delete' unit.pk %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'property_update' property.pk %}">Edit Property</a>
+    <a href="{% url 'property_delete' property.pk %}">Delete Property</a>
+{% endblock content %}
