@@ -1,13 +1,56 @@
 {% extends "base.html" %}
 {% block content %}
     <h2>{{ property.name }}</h2>
-    <p>Country: {{ property.country }}</p>
-    <p>State: {{ property.state }}</p>
-    <p>City: {{ property.city }}</p>
-    <p>Sub Locality: {{ property.sub_locality }}</p>
-    <p>Address: {{ property.address }}</p>
-    <p>Square Feet: {{ property.square_feet }}</p>
-    <p>{{ property.description }}</p>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Property Details</h3>
+            <div class="border bg-light">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Country</th>
+                            <td>{{ property.country }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">State</th>
+                            <td>{{ property.state }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">City</th>
+                            <td>{{ property.city }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Sub Locality</th>
+                            <td>{{ property.sub_locality }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Area (Sqft)</th>
+                            <td>{{ property.square_feet }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Address</th>
+                            <td>{{ property.address }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Description</th>
+                            <td>{{ property.description }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Actions</th>
+                            <td>
+                                <a href="{% url 'property_update' property.pk %}">Edit Property</a>
+                                <a href="{% url 'property_delete' property.pk %}">Delete Property</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h3>Unit Details</h3>
+            <div class="border bg-light">Container 2</div>
+        </div>
+    </div>
     <a href="{% url 'unit_create' property.pk %}">Add Unit</a>
     <ul>
         {% for unit in property.units.all %}
@@ -23,6 +66,4 @@
             </li>
         {% endfor %}
     </ul>
-    <a href="{% url 'property_update' property.pk %}">Edit Property</a>
-    <a href="{% url 'property_delete' property.pk %}">Delete Property</a>
 {% endblock content %}
