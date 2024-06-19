@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Delete Unit</h2>
+    <p>Are you sure you want to delete Unit {{ unit.unit_number }} in {{ unit.property.name }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+    </form>
+    <a href="{% url 'property_detail' unit.property.pk %}">Cancel</a>
+{% endblock content %}

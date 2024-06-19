@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>{{ property.name }}</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Property Details</h3>
+            <div class="border bg-light">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Country</th>
+                            <td>{{ property.country }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">State</th>
+                            <td>{{ property.state }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">City</th>
+                            <td>{{ property.city }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Sub Locality</th>
+                            <td>{{ property.sub_locality }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Area (Sqft)</th>
+                            <td>{{ property.square_feet }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Address</th>
+                            <td>{{ property.address }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Description</th>
+                            <td>{{ property.description }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Actions</th>
+                            <td>
+                                <a href="{% url 'property_update' property.pk %}">Edit Property</a>
+                                <a href="{% url 'property_delete' property.pk %}">Delete Property</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h3>Unit Details</h3>
+            {% for unit in property.units.all %}
+                <div class="card border-primary mb-3" style="max-width: 30rem;">
+                    <div class="card-header">Header</div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Unit</th>
+                                    <td>{{ unit.unit_number }}: {{ unit.description }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Beds</th>
+                                    <td>{{ unit.num_beds }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Bathrooms</th>
+                                    <td>{{ unit.num_bathrooms }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Kitchens</th>
+                                    <td>{{ unit.num_kitchens }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Living Rooms</th>
+                                    <td>{{ unit.num_living_rooms }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Stores</th>
+                                    <td>{{ unit.num_stores }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Actions</th>
+                                    <td>
+                                        <a href="{% url 'unit_update' unit.pk %}">Edit</a>
+                                        <a href="{% url 'unit_delete' unit.pk %}">Delete</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+            <a href="{% url 'unit_create' property.pk %}">Add Unit</a>
+        </div>
+    </div>
+{% endblock content %}

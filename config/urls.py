@@ -22,9 +22,10 @@ from django.urls import include, path
 from .views import HomePageView, LoggingExampleView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('users/', include('users.urls')),
     path('', HomePageView.as_view(), name='home'),
+    path('admin/', admin.site.urls),
+    path('user/', include('users.urls')),
+    path('property/', include('properties.urls')),
     path('logging/', LoggingExampleView, name='home'),
 ]
 
