@@ -2,7 +2,7 @@
 {% block content %}
     <h2>{{ property.name }}</h2>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <h3>Property Details</h3>
             <div class="border bg-light">
                 <table class="table table-striped">
@@ -46,24 +46,51 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <h3>Unit Details</h3>
-            <div class="border bg-light">Container 2</div>
+            {% for unit in property.units.all %}
+                <div class="card border-primary mb-3" style="max-width: 30rem;">
+                    <div class="card-header">Header</div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Unit</th>
+                                    <td>{{ unit.unit_number }}: {{ unit.description }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Beds</th>
+                                    <td>{{ unit.num_beds }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Bathrooms</th>
+                                    <td>{{ unit.num_bathrooms }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Kitchens</th>
+                                    <td>{{ unit.num_kitchens }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Living Rooms</th>
+                                    <td>{{ unit.num_living_rooms }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Stores</th>
+                                    <td>{{ unit.num_stores }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Actions</th>
+                                    <td>
+                                        <a href="{% url 'unit_update' unit.pk %}">Edit</a>
+                                        <a href="{% url 'unit_delete' unit.pk %}">Delete</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endfor %}
+            <a href="{% url 'unit_create' property.pk %}">Add Unit</a>
         </div>
     </div>
-    <a href="{% url 'unit_create' property.pk %}">Add Unit</a>
-    <ul>
-        {% for unit in property.units.all %}
-            <li>
-                Unit {{ unit.unit_number }}: {{ unit.description }}
-                <p>Beds: {{ unit.num_beds }}</p>
-                <p>Bathrooms: {{ unit.num_bathrooms }}</p>
-                <p>Kitchens: {{ unit.num_kitchens }}</p>
-                <p>Living Rooms: {{ unit.num_living_rooms }}</p>
-                <p>Stores: {{ unit.num_stores }}</p>
-                <a href="{% url 'unit_update' unit.pk %}">Edit</a>
-                <a href="{% url 'unit_delete' unit.pk %}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
 {% endblock content %}
