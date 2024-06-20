@@ -53,6 +53,14 @@ class UserLoginView(LoginView):
             logger.info(f'User {user.email} logged in as tenant')
             return reverse_lazy('tenant_dashboard')
 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.role == User.LANDLORD:
+                return redirect('landlord_dashboard')
+            else:
+                return redirect('tenant_dashboard')
+        return super().dispatch(request, *args, **kwargs)
+
 
 class UserLogoutView(LogoutView):
     next_page = reverse_lazy('login')
