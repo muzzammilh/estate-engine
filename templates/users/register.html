@@ -42,7 +42,7 @@
                             <select name="role"
                                     class="form-select {% if form.role.errors %}is-invalid{% endif %}"
                                     id="id_role">
-                                <option value="1">Landlord</option>
+                                <option value="1">Owner</option>
                                 <option value="2">Tenant</option>
                             </select>
                             {% for error in form.role.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
