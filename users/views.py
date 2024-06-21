@@ -24,7 +24,7 @@ class UserRegisterView(CreateView):
     model = User
     form_class = UserRegistrationForm
     template_name = 'users/register.html'
-    success_url = reverse_lazy('landlord_dashboard')
+    success_url = reverse_lazy('owner_dashboard')
 
     def form_valid(self, form):
         logger.info('Form is valid in UserRegisterView')
@@ -32,9 +32,9 @@ class UserRegisterView(CreateView):
         user = form.save()
         login(self.request, user)
         logger.info(f'User {user.username} registered and logged in')
-        if user.role == User.LANDLORD:
-            logger.info('Redirecting to landlord dashboard')
-            return redirect('landlord_dashboard')
+        if user.role == User.OWNER:
+            logger.info('Redirecting to owner dashboard')
+            return redirect('owner_dashboard')
         else:
             logger.info('Redirecting to tenant dashboard')
             return redirect('tenant_dashboard')
@@ -46,17 +46,17 @@ class UserLoginView(LoginView):
 
     def get_success_url(self):
         user = self.request.user
-        if user.role == User.LANDLORD:
-            logger.info(f'User {user.email} logged in as landlord')
-            return reverse_lazy('landlord_dashboard')
+        if user.role == User.OWNER:
+            logger.info(f'User {user.email} logged in as owner')
+            return reverse_lazy('owner_dashboard')
         else:
             logger.info(f'User {user.email} logged in as tenant')
             return reverse_lazy('tenant_dashboard')
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            if request.user.role == User.LANDLORD:
-                return redirect('landlord_dashboard')
+            if request.user.role == User.OWNER:
+                return redirect('owner_dashboard')
             else:
                 return redirect('tenant_dashboard')
         return super().dispatch(request, *args, **kwargs)
@@ -87,8 +87,8 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'users/password_reset_complete.html'
 
 
-class LandlordDashboardView(TemplateView):
-    template_name = 'dashboard/landlord_dashboard.html'
+class OwnerDashboardView(TemplateView):
+    template_name = 'dashboard/owner_dashboard.html'
 
 
 class TenantDashboardView(TemplateView):

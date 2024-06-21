@@ -7,11 +7,11 @@ from .managers import UserManager
 
 
 class User(AbstractUser, BasedModel):
-    LANDLORD = 1
+    OWNER = 1
     TENANT = 2
 
     USER_ROLES = [
-        (LANDLORD, 'Landlord'),
+        (OWNER, 'Owner'),
         (TENANT, 'Tenant'),
     ]
 
