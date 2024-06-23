@@ -76,7 +76,7 @@ class Unit(BasedModel):
         return f"Unit {self.unit_number} in {self.property.name}"
 
     def get_absolute_url(self):
-        return reverse('property_detail', kwargs={'pk': self.pk})
+        return reverse('property_detail', kwargs={'pk': self.property.pk})
 
     def delete(self, *args, **kwargs):
         self.images.all().delete()
