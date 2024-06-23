@@ -1,15 +1,17 @@
 from django.conf import settings
 from django.db import models
 
+from config.models import BasedModel
 
-class Country(models.Model):
+
+class Country(BasedModel):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
 
-class State(models.Model):
+class State(BasedModel):
     country = models.ForeignKey(Country, related_name='states', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
@@ -17,7 +19,7 @@ class State(models.Model):
         return self.name
 
 
-class City(models.Model):
+class City(BasedModel):
     state = models.ForeignKey(State, related_name='cities', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
@@ -25,7 +27,7 @@ class City(models.Model):
         return self.name
 
 
-class SubLocality(models.Model):
+class SubLocality(BasedModel):
     city = models.ForeignKey(City, related_name='sub_localities', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
 
@@ -33,7 +35,7 @@ class SubLocality(models.Model):
         return self.name
 
 
-class Property(models.Model):
+class Property(BasedModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     country = models.ForeignKey(Country, on_delete=models.CASCADE)
@@ -49,7 +51,7 @@ class Property(models.Model):
         return self.name
 
 
-class Unit(models.Model):
+class Unit(BasedModel):
     property = models.ForeignKey(Property, related_name='units', on_delete=models.CASCADE)
     unit_number = models.CharField(max_length=50)
     description = models.TextField(blank=True, null=True)
