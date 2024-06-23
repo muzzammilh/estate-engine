@@ -56,6 +56,10 @@ class Property(BasedModel):
     def get_absolute_url(self):
         return reverse('property_detail', kwargs={'pk': self.pk})
 
+    def delete(self, *args, **kwargs):
+        self.images.all().delete()
+        super().delete(*args, **kwargs)
+
 
 class Unit(BasedModel):
     property = models.ForeignKey(Property, related_name='units', on_delete=models.CASCADE)
@@ -73,3 +77,7 @@ class Unit(BasedModel):
 
     def get_absolute_url(self):
         return reverse('property_detail', kwargs={'pk': self.pk})
+
+    def delete(self, *args, **kwargs):
+        self.images.all().delete()
+        super().delete(*args, **kwargs)
