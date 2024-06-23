@@ -1,14 +1,13 @@
-# properties/views.py
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from .forms import PropertyForm, UnitForm
-from .models import City, Property, State, SubLocality, Unit
+from .models import (City, Property, PropertyImage, State, SubLocality, Unit,
+                     UnitImage)
 
 
 class PropertyListView(LoginRequiredMixin, ListView):
@@ -26,6 +25,19 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         return Property.objects.filter(owner=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        property_object = self.get_object()
+
+        property_images = PropertyImage.objects.filter(property=property_object)
+        units = Unit.objects.filter(property=property_object)
+
+        unit_images = UnitImage.objects.filter(unit__in=units)
+
+        context['property_images'] = property_images
+        context['unit_images'] = unit_images
+        return context
+
 
 class PropertyCreateView(LoginRequiredMixin, CreateView):
     model = Property
@@ -35,7 +47,10 @@ class PropertyCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        for file in self.request.FILES.getlist('images'):
+            PropertyImage.objects.create(property=self.object, image=file)
+        return response
 
 
 class PropertyUpdateView(LoginRequiredMixin, UpdateView):
@@ -46,6 +61,14 @@ class PropertyUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Property.objects.filter(owner=self.request.user)
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+
+        for file in self.request.FILES.getlist('images'):
+            PropertyImage.objects.create(property=self.object, image=file)
+
+        return super().form_valid(form)
 
 
 class PropertyDeleteView(LoginRequiredMixin, DeleteView):
@@ -67,8 +90,14 @@ class UnitCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         property = get_object_or_404(Property, pk=self.kwargs['property_pk'], owner=self.request.user)
+
         form.instance.property = property
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        for file in self.request.FILES.getlist('images'):
+            UnitImage.objects.create(unit=self.object, image=file)
+
+        return response
 
 
 class UnitUpdateView(LoginRequiredMixin, UpdateView):
@@ -81,6 +110,14 @@ class UnitUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Unit.objects.filter(property__owner=self.request.user)
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        for file in self.request.FILES.getlist('images'):
+            UnitImage.objects.create(unit=self.object, image=file)
+
+        return response
 
 
 class UnitDeleteView(LoginRequiredMixin, DeleteView):
@@ -110,3 +147,23 @@ def load_sub_localities(request):
     city_id = request.GET.get('city_id')
     sub_localities = SubLocality.objects.filter(city_id=city_id).order_by('name')
     return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
+
+
+class PropertyImageDeleteView(DeleteView):
+    def get(self, request, *args, **kwargs):
+        image_id = kwargs.get('image_id')
+        image = get_object_or_404(PropertyImage, pk=image_id)
+        property_id = image.property.pk
+        image.delete()
+        return redirect('property_detail', pk=property_id)
+
+
+class UnitImageDeleteView(DeleteView):
+    def get(self, request, *args, **kwargs):
+        image_id = kwargs.get('image_id')
+        image = get_object_or_404(UnitImage, pk=image_id)
+        unit = image.unit
+        image.delete()
+        property_id = unit.property.pk if unit.property else None
+        if property_id:
+            return redirect('property_detail', pk=property_id)

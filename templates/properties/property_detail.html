@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block title %}
+    Property Detail
+{% endblock title %}
 {% block content %}
     <h2>{{ property.name }}</h2>
     <div class="row">
@@ -7,6 +10,21 @@
             <div class="border bg-light">
                 <table class="table table-striped">
                     <tbody>
+                        {% for image in property_images %}
+                            <tr>
+                                <td>
+                                    <img src="{{ image.image.url }}"
+                                         alt="Property Image"
+                                         width="200"
+                                         height="auto">
+                                    <a href="{% url 'delete_property_image' image.pk %}">Delete</a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="2">No images found</td>
+                            </tr>
+                        {% endfor %}
                         <tr>
                             <th scope="row">Country</th>
                             <td>{{ property.country }}</td>
@@ -50,10 +68,24 @@
             <h3>Unit Details</h3>
             {% for unit in property.units.all %}
                 <div class="card border-primary mb-3" style="max-width: 30rem;">
-                    <div class="card-header">Header</div>
                     <div class="card-body">
                         <table class="table table-striped">
                             <tbody>
+                                {% for image in unit_images %}
+                                    <tr>
+                                        <td>
+                                            <img src="{{ image.image.url }}"
+                                                 alt="Unit Image"
+                                                 width="200"
+                                                 height="auto">
+                                            <a href="{% url 'delete_unit_image' image.pk %}">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2">No unit images found</td>
+                                    </tr>
+                                {% endfor %}
                                 <tr>
                                     <th scope="row">Unit</th>
                                     <td>{{ unit.unit_number }}: {{ unit.description }}</td>

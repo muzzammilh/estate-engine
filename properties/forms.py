@@ -1,8 +1,24 @@
-# properties/forms.py
-
 from django import forms
 
 from .models import City, Country, Property, State, SubLocality, Unit
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = [single_file_clean(data, initial)]
+        return result
 
 
 class PropertyForm(forms.ModelForm):
@@ -10,6 +26,7 @@ class PropertyForm(forms.ModelForm):
     state = forms.ModelChoiceField(queryset=State.objects.none(), empty_label="Select State")
     city = forms.ModelChoiceField(queryset=City.objects.none(), empty_label="Select City")
     sub_locality = forms.ModelChoiceField(queryset=SubLocality.objects.none(), empty_label="Select Sub Locality", required=False)
+    images = MultipleFileField(label='Select files', required=False)
 
     class Meta:
         model = Property
@@ -46,6 +63,8 @@ class PropertyForm(forms.ModelForm):
 
 
 class UnitForm(forms.ModelForm):
+    images = MultipleFileField(label='Select files', required=False)
+
     class Meta:
         model = Unit
         fields = ['unit_number', 'description', 'num_beds', 'num_bathrooms', 'num_kitchens', 'num_living_rooms', 'num_stores']

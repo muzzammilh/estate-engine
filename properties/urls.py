@@ -3,9 +3,10 @@
 from django.urls import path
 
 from .views import (PropertyCreateView, PropertyDeleteView, PropertyDetailView,
-                    PropertyListView, PropertyUpdateView, UnitCreateView,
-                    UnitDeleteView, UnitUpdateView, load_cities, load_states,
-                    load_sub_localities)
+                    PropertyImageDeleteView, PropertyListView,
+                    PropertyUpdateView, UnitCreateView, UnitDeleteView,
+                    UnitImageDeleteView, UnitUpdateView, load_cities,
+                    load_states, load_sub_localities)
 
 urlpatterns = [
     path('', PropertyListView.as_view(), name='property_list'),
@@ -19,4 +20,6 @@ urlpatterns = [
     path('ajax/load-states/', load_states, name='ajax_load_states'),
     path('ajax/load-cities/', load_cities, name='ajax_load_cities'),
     path('ajax/load-sub-localities/', load_sub_localities, name='ajax_load_sub_localities'),
+    path('property/image/delete/<int:image_id>/', PropertyImageDeleteView.as_view(), name='delete_property_image'),
+    path('unit/image/delete/<int:image_id>/', UnitImageDeleteView.as_view(), name='delete_unit_image'),
 ]

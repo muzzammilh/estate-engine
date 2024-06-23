@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+from config.models import BasedModel
+
 
 class Country(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -61,3 +63,19 @@ class Unit(models.Model):
 
     def __str__(self):
         return f"Unit {self.unit_number} in {self.property.name}"
+
+
+class PropertyImage(BasedModel):
+    property = models.ForeignKey(Property, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='property_images/')
+
+    def __str__(self):
+        return f"Pictures of {self.property.name}"
+
+
+class UnitImage(BasedModel):
+    unit = models.ForeignKey(Unit, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='unit_images/')
+
+    def __str__(self):
+        return f"Pictures of Unit {self.unit.id}"
