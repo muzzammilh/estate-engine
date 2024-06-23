@@ -60,22 +60,6 @@ class PropertyCreateView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form)
 
-    # def form_valid(self, form):
-    #     context = self.get_context_data()
-    #     image_form = context['image_form']
-
-    #     if form.is_valid() and image_form.is_valid():
-    #         form.instance.owner = self.request.user
-    #         self.object = form.save()
-
-    #         image = image_form.save(commit=False)
-    #         image.content_object = self.object
-    #         image.save()
-
-    #         return redirect(self.object.get_absolute_url())
-    #     else:
-    #         return self.form_invalid(form)
-
 
 class PropertyUpdateView(LoginRequiredMixin, UpdateView):
     model = Property
