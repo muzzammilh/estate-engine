@@ -153,23 +153,6 @@ class UnitCreateView(LoginRequiredMixin, CreateView):
         else:
             return self.form_invalid(form)
 
-    # def form_valid(self, form):
-    #     context = self.get_context_data()
-    #     image_form = context['image_form']
-    #     property = get_object_or_404(Property, pk=self.kwargs['property_pk'], owner=self.request.user)
-    #     form.instance.property = property
-
-    #     if form.is_valid() and image_form.is_valid():
-    #         self.object = form.save()
-
-    #         image = image_form.save(commit=False)
-    #         image.content_object = self.object
-    #         image.save()
-
-    #         return redirect(self.object.get_absolute_url())
-    #     else:
-    #         return self.form_invalid(form)
-
 
 class UnitUpdateView(LoginRequiredMixin, UpdateView):
     model = Unit
