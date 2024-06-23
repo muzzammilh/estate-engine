@@ -6,8 +6,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from .forms import PropertyForm, UnitForm
-from .models import (City, Property, PropertyImage, State, SubLocality, Unit,
-                     UnitImage)
+from .models import City, Image, Property, State, SubLocality, Unit
 
 
 class PropertyListView(LoginRequiredMixin, ListView):
@@ -29,10 +28,10 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         property_object = self.get_object()
 
-        property_images = PropertyImage.objects.filter(property=property_object)
+        property_images = Image.objects.filter(property=property_object)
         units = Unit.objects.filter(property=property_object)
 
-        unit_images = UnitImage.objects.filter(unit__in=units)
+        unit_images = Image.objects.filter(unit__in=units)
 
         context['property_images'] = property_images
         context['unit_images'] = unit_images
@@ -49,7 +48,7 @@ class PropertyCreateView(LoginRequiredMixin, CreateView):
         form.instance.owner = self.request.user
         response = super().form_valid(form)
         for file in self.request.FILES.getlist('images'):
-            PropertyImage.objects.create(property=self.object, image=file)
+            Image.objects.create(property=self.object, image=file)
         return response
 
 
@@ -66,7 +65,7 @@ class PropertyUpdateView(LoginRequiredMixin, UpdateView):
         self.object = self.get_object()
 
         for file in self.request.FILES.getlist('images'):
-            PropertyImage.objects.create(property=self.object, image=file)
+            Image.objects.create(property=self.object, image=file)
 
         return super().form_valid(form)
 
@@ -95,7 +94,7 @@ class UnitCreateView(LoginRequiredMixin, CreateView):
         response = super().form_valid(form)
 
         for file in self.request.FILES.getlist('images'):
-            UnitImage.objects.create(unit=self.object, image=file)
+            Image.objects.create(unit=self.object, image=file)
 
         return response
 
@@ -115,7 +114,7 @@ class UnitUpdateView(LoginRequiredMixin, UpdateView):
         response = super().form_valid(form)
 
         for file in self.request.FILES.getlist('images'):
-            UnitImage.objects.create(unit=self.object, image=file)
+            Image.objects.create(unit=self.object, image=file)
 
         return response
 
@@ -152,7 +151,7 @@ def load_sub_localities(request):
 class PropertyImageDeleteView(DeleteView):
     def get(self, request, *args, **kwargs):
         image_id = kwargs.get('image_id')
-        image = get_object_or_404(PropertyImage, pk=image_id)
+        image = get_object_or_404(Image, pk=image_id)
         property_id = image.property.pk
         image.delete()
         return redirect('property_detail', pk=property_id)
@@ -161,7 +160,7 @@ class PropertyImageDeleteView(DeleteView):
 class UnitImageDeleteView(DeleteView):
     def get(self, request, *args, **kwargs):
         image_id = kwargs.get('image_id')
-        image = get_object_or_404(UnitImage, pk=image_id)
+        image = get_object_or_404(Image, pk=image_id)
         unit = image.unit
         image.delete()
         property_id = unit.property.pk if unit.property else None
