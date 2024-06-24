@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
+from django.urls import reverse
 
 from config.models import BasedModel
 
@@ -46,9 +48,17 @@ class Property(BasedModel):
     description = models.TextField(blank=True, null=True)
     square_feet = models.PositiveIntegerField()
     is_leased = models.BooleanField(default=False)
+    images = GenericRelation('gallery.Image')
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('property_detail', kwargs={'pk': self.pk})
+
+    def delete(self, *args, **kwargs):
+        self.images.all().delete()
+        super().delete(*args, **kwargs)
 
 
 class Unit(BasedModel):
@@ -60,6 +70,14 @@ class Unit(BasedModel):
     num_kitchens = models.PositiveIntegerField()
     num_living_rooms = models.PositiveIntegerField()
     num_stores = models.PositiveIntegerField()
+    images = GenericRelation('gallery.Image')
 
     def __str__(self):
         return f"Unit {self.unit_number} in {self.property.name}"
+
+    def get_absolute_url(self):
+        return reverse('property_detail', kwargs={'pk': self.property.pk})
+
+    def delete(self, *args, **kwargs):
+        self.images.all().delete()
+        super().delete(*args, **kwargs)
