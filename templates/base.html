@@ -57,8 +57,8 @@
             }
 
             #sidebar {
-                width: 70px;
-                min-width: 70px;
+                width: 260px;
+                min-width: 260px;
                 z-index: 1000;
                 transition: all .25s ease-in-out;
                 background-color: #0e2238;
@@ -66,9 +66,9 @@
                 flex-direction: column;
             }
 
-            #sidebar.expand {
-                width: 260px;
-                min-width: 260px;
+            #sidebar.shrink {
+                width: 70px;
+                min-width: 70px;
             }
 
             .toggle-btn {
@@ -93,8 +93,8 @@
                 font-weight: 600;
             }
 
-            #sidebar:not(.expand) .sidebar-logo,
-            #sidebar:not(.expand) a.sidebar-link span {
+            #sidebar.shrink .sidebar-logo,
+            #sidebar.shrink a.sidebar-link span {
                 display: none;
             }
 
@@ -126,7 +126,7 @@
                 position: relative;
             }
 
-            #sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
+            #sidebar.shrink .sidebar-item .sidebar-dropdown {
                 position: absolute;
                 top: 0;
                 left: 70px;
@@ -136,14 +136,14 @@
                 display: none;
             }
 
-            #sidebar:not(.expand) .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
+            #sidebar.shrink .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
                 display: block;
                 max-height: 15em;
                 width: 100%;
                 opacity: 1;
             }
 
-            #sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
+            #sidebar .sidebar-link[data-bs-toggle="collapse"]::after {
                 border: solid;
                 border-width: 0 .075rem .075rem 0;
                 content: "";
@@ -156,7 +156,7 @@
                 transition: all .2s ease-out;
             }
 
-            #sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+            #sidebar .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
                 transform: rotate(45deg);
                 transition: all .2s ease-out;
             }
@@ -167,6 +167,7 @@
             {% if user.is_authenticated %}
                 <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
                     <div class="container-fluid">
+                        <a class="navbar-brand" href="#">Estate Engine</a>
                         <button class="navbar-toggler"
                                 type="button"
                                 data-bs-toggle="collapse"
@@ -178,6 +179,29 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navbarColor01">
                             <ul class="navbar-nav me-auto">
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#">Home
+                                        <span class="visually-hidden">(current)</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">About</a>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle"
+                                       data-bs-toggle="dropdown"
+                                       href="#"
+                                       role="button"
+                                       aria-haspopup="true"
+                                       aria-expanded="false">Dropdown</a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#">Separated link</a>
+                                    </div>
+                                </li>
                             </ul>
                             <div class="text-light">
                                 <ul class="list-unstyled">
@@ -209,7 +233,7 @@
             {% endif %}
             <div class="main-content">
                 {% if user.is_authenticated %}
-                    <aside id="sidebar">
+                    <aside id="sidebar" class="expand">
                         <div class="d-flex">
                             <button class="toggle-btn" type="button">
                                 <i class="lni lni-grid-alt"></i>
@@ -313,10 +337,28 @@
         <script src="{% static 'js/popper.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script>
-            const hamBurger = document.querySelector(".toggle-btn");
+            document.addEventListener("DOMContentLoaded", function() {
+                // Check local storage for sidebar state
+                if (localStorage.getItem("sidebarState") === "shrink") {
+                    document.querySelector("#sidebar").classList.add("shrink");
+                } else {
+                    document.querySelector("#sidebar").classList.add("expand");
+                }
 
-            hamBurger.addEventListener("click", function () {
-                document.querySelector("#sidebar").classList.toggle("expand");
+                // Toggle button click event
+                const hamBurger = document.querySelector(".toggle-btn");
+                hamBurger.addEventListener("click", function() {
+                    const sidebar = document.querySelector("#sidebar");
+                    sidebar.classList.toggle("shrink");
+                    sidebar.classList.toggle("expand");
+
+                    // Save the current state to local storage
+                    if (sidebar.classList.contains("shrink")) {
+                        localStorage.setItem("sidebarState", "shrink");
+                    } else {
+                        localStorage.setItem("sidebarState", "expand");
+                    }
+                });
             });
         </script>
         {% block js %}
