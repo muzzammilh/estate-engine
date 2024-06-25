@@ -39,20 +39,13 @@
 
             .wrapper {
                 display: flex;
-                flex-direction: column;
                 min-height: 100vh;
             }
 
-            .main-content {
-                display: flex;
-                flex: 1;
-            }
-
-            .main {
+            .content {
                 flex: 1;
                 background-color: #fafbfe;
-                padding: 20px;
-                overflow: hidden;
+                /* padding: 20px; */
                 transition: all 0.35s ease-in-out;
             }
 
@@ -61,7 +54,7 @@
                 min-width: 260px;
                 z-index: 1000;
                 transition: all .25s ease-in-out;
-                background-color: #0e2238;
+                background-color: #233344;
                 display: flex;
                 flex-direction: column;
             }
@@ -165,173 +158,152 @@
     <body>
         <div class="wrapper">
             {% if user.is_authenticated %}
-                <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-                    <div class="container-fluid">
-                        <a class="navbar-brand" href="#">Estate Engine</a>
-                        <button class="navbar-toggler"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#navbarColor01"
-                                aria-controls="navbarColor01"
-                                aria-expanded="false"
-                                aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
+                <aside id="sidebar" class="expand">
+                    <div class="d-flex">
+                        <button class="toggle-btn" type="button">
+                            <i class="lni lni-grid-alt"></i>
                         </button>
-                        <div class="collapse navbar-collapse" id="navbarColor01">
-                            <ul class="navbar-nav me-auto">
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="#">Home
-                                        <span class="visually-hidden">(current)</span>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">About</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle"
-                                       data-bs-toggle="dropdown"
-                                       href="#"
-                                       role="button"
-                                       aria-haspopup="true"
-                                       aria-expanded="false">Dropdown</a>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="#">Action</a>
-                                        <a class="dropdown-item" href="#">Another action</a>
-                                        <a class="dropdown-item" href="#">Something else here</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">Separated link</a>
-                                    </div>
-                                </li>
-                            </ul>
-                            <div class="text-light">
-                                <ul class="list-unstyled">
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle"
-                                           data-bs-toggle="dropdown"
-                                           href="#"
-                                           role="button"
-                                           aria-haspopup="true"
-                                           aria-expanded="false">{{ user.email }}</a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a class="dropdown-item" href="{% url 'profile_update' %}">Update Profile</a>
-                                            <a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a>
-                                            <div class="dropdown-divider"></div>
-                                            <form method="post" action="{% url 'logout' %}" class="dropdown-item">
-                                                {% csrf_token %}
-                                                <button type="submit"
-                                                        class="btn btn-link p-0 text-decoration-none dropdown-item">
-                                                    Logout
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="sidebar-logo">
+                            <a href="#">Estate Engine</a>
                         </div>
                     </div>
-                </nav>
+                    <ul class="sidebar-nav">
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="lni lni-user"></i>
+                                <span>Profile</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="lni lni-agenda"></i>
+                                <span>Task</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#"
+                               class="sidebar-link collapsed has-dropdown"
+                               data-bs-toggle="collapse"
+                               data-bs-target="#auth"
+                               aria-expanded="false"
+                               aria-controls="auth">
+                                <i class="lni lni-protection"></i>
+                                <span>Auth</span>
+                            </a>
+                            <ul id="auth"
+                                class="sidebar-dropdown list-unstyled collapse"
+                                data-bs-parent="#sidebar">
+                                <li class="sidebar-item">
+                                    <a href="#" class="sidebar-link">Login</a>
+                                </li>
+                                <li class="sidebar-item">
+                                    <a href="#" class="sidebar-link">Register</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#"
+                               class="sidebar-link collapsed has-dropdown"
+                               data-bs-toggle="collapse"
+                               data-bs-target="#multi"
+                               aria-expanded="false"
+                               aria-controls="multi">
+                                <i class="lni lni-layout"></i>
+                                <span>Multi Level</span>
+                            </a>
+                            <ul id="multi"
+                                class="sidebar-dropdown list-unstyled collapse"
+                                data-bs-parent="#sidebar">
+                                <li class="sidebar-item">
+                                    <a href="#"
+                                       class="sidebar-link collapsed"
+                                       data-bs-toggle="collapse"
+                                       data-bs-target="#multi-two"
+                                       aria-expanded="false"
+                                       aria-controls="multi-two">Two Links</a>
+                                    <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
+                                        <li class="sidebar-item">
+                                            <a href="#" class="sidebar-link">Link 1</a>
+                                        </li>
+                                        <li class="sidebar-item">
+                                            <a href="#" class="sidebar-link">Link 2</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="lni lni-popup"></i>
+                                <span>Notification</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">
+                                <i class="lni lni-cog"></i>
+                                <span>Setting</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="sidebar-footer">
+                        <a href="#" class="sidebar-link">
+                            <!-- <i class="lni lni-exit"></i>
+                            <span>Logout</span> -->
+                        </a>
+                    </div>
+                </aside>
             {% endif %}
-            <div class="main-content">
+            <div class="content">
                 {% if user.is_authenticated %}
-                    <aside id="sidebar" class="expand">
-                        <div class="d-flex">
-                            <button class="toggle-btn" type="button">
-                                <i class="lni lni-grid-alt"></i>
+                    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+                        <div class="container-fluid">
+                            <button class="navbar-toggler"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#navbarColor01"
+                                    aria-controls="navbarColor01"
+                                    aria-expanded="false"
+                                    aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
                             </button>
-                            <div class="sidebar-logo">
-                                <a href="#">Estate Engine</a>
+                            <div class="collapse navbar-collapse" id="navbarColor01">
+                                <ul class="navbar-nav me-auto">
+                                    <li class="nav-item dropdown">
+                                        <div class="dropdown-menu"></div>
+                                    </li>
+                                </ul>
+                                <div class="text-light">
+                                    <ul class="list-unstyled">
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle"
+                                               data-bs-toggle="dropdown"
+                                               href="#"
+                                               role="button"
+                                               aria-haspopup="true"
+                                               aria-expanded="false">{{ user.email }}</a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="{% url 'profile_update' %}">Update Profile</a>
+                                                <a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a>
+                                                <div class="dropdown-divider"></div>
+                                                <form method="post" action="{% url 'logout' %}" class="dropdown-item">
+                                                    {% csrf_token %}
+                                                    <button type="submit"
+                                                            class="btn btn-link p-0 text-decoration-none dropdown-item">
+                                                        Logout
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                        <ul class="sidebar-nav">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">
-                                    <i class="lni lni-user"></i>
-                                    <span>Profile</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">
-                                    <i class="lni lni-agenda"></i>
-                                    <span>Task</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#"
-                                   class="sidebar-link collapsed has-dropdown"
-                                   data-bs-toggle="collapse"
-                                   data-bs-target="#auth"
-                                   aria-expanded="false"
-                                   aria-controls="auth">
-                                    <i class="lni lni-protection"></i>
-                                    <span>Auth</span>
-                                </a>
-                                <ul id="auth"
-                                    class="sidebar-dropdown list-unstyled collapse"
-                                    data-bs-parent="#sidebar">
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Login</a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Register</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#"
-                                   class="sidebar-link collapsed has-dropdown"
-                                   data-bs-toggle="collapse"
-                                   data-bs-target="#multi"
-                                   aria-expanded="false"
-                                   aria-controls="multi">
-                                    <i class="lni lni-layout"></i>
-                                    <span>Multi Level</span>
-                                </a>
-                                <ul id="multi"
-                                    class="sidebar-dropdown list-unstyled collapse"
-                                    data-bs-parent="#sidebar">
-                                    <li class="sidebar-item">
-                                        <a href="#"
-                                           class="sidebar-link collapsed"
-                                           data-bs-toggle="collapse"
-                                           data-bs-target="#multi-two"
-                                           aria-expanded="false"
-                                           aria-controls="multi-two">Two Links</a>
-                                        <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse">
-                                            <li class="sidebar-item">
-                                                <a href="#" class="sidebar-link">Link 1</a>
-                                            </li>
-                                            <li class="sidebar-item">
-                                                <a href="#" class="sidebar-link">Link 2</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">
-                                    <i class="lni lni-popup"></i>
-                                    <span>Notification</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">
-                                    <i class="lni lni-cog"></i>
-                                    <span>Setting</span>
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="sidebar-footer">
-                            <a href="#" class="sidebar-link">
-                                <i class="lni lni-exit"></i>
-                                <span>Logout</span>
-                            </a>
-                        </div>
-                    </aside>
+                    </nav>
                 {% endif %}
-                <div class="main">
+                <main>
                     {% block content %}
                     {% endblock content %}
-                </div>
+                </main>
             </div>
         </div>
         <script src="{% static 'js/popper.min.js' %}"></script>
