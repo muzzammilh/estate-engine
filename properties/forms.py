@@ -48,4 +48,13 @@ class PropertyForm(forms.ModelForm):
 class UnitForm(forms.ModelForm):
     class Meta:
         model = Unit
-        fields = ['unit_number', 'description', 'num_beds', 'num_bathrooms', 'num_kitchens', 'num_living_rooms', 'num_stores']
+        fields = [
+            'unit_number',
+            'description',
+            'num_beds',
+            'num_bathrooms',
+            'num_kitchens',
+            'num_living_rooms',
+            'num_stores',
+            'is_available_for_rent'
+        ]

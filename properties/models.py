@@ -71,6 +71,7 @@ class Unit(BasedModel):
     num_living_rooms = models.PositiveIntegerField()
     num_stores = models.PositiveIntegerField()
     images = GenericRelation('gallery.Image')
+    is_available_for_rent = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Unit {self.unit_number} in {self.property.name}"
