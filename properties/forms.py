@@ -58,3 +58,33 @@ class UnitForm(forms.ModelForm):
             'num_stores',
             'is_available_for_rent'
         ]
+
+
+class TenantUnitFilterForm(forms.Form):
+    country = forms.ModelChoiceField(queryset=Country.objects.all(), required=False, empty_label="All Countries")
+    state = forms.ModelChoiceField(queryset=State.objects.none(), required=False, empty_label="All States")
+    city = forms.ModelChoiceField(queryset=City.objects.none(), required=False, empty_label="All Cities")
+    sub_locality = forms.ModelChoiceField(queryset=SubLocality.objects.none(), required=False, empty_label="All Sub Localities")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'country' in self.data:
+            try:
+                country_id = int(self.data.get('country'))
+                self.fields['state'].queryset = State.objects.filter(country_id=country_id).order_by('name')
+            except (ValueError, TypeError):
+                pass
+
+        if 'state' in self.data:
+            try:
+                state_id = int(self.data.get('state'))
+                self.fields['city'].queryset = City.objects.filter(state_id=state_id).order_by('name')
+            except (ValueError, TypeError):
+                pass
+
+        if 'city' in self.data:
+            try:
+                city_id = int(self.data.get('city'))
+                self.fields['sub_locality'].queryset = SubLocality.objects.filter(city_id=city_id).order_by('name')
+            except (ValueError, TypeError):
+                pass
