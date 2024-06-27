@@ -12,7 +12,7 @@
     <ul>
         {% for unit in units %}
             <li>
-                {{ unit.unit_number }} - {{ unit.property.name }} in {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}
+                <a href="{% url 'unit_detail' unit.pk %}">{{ unit.unit_number }} - {{ unit.property.name }} in {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}</a>
             </li>
         {% empty %}
             <li>No units available for rent.</li>

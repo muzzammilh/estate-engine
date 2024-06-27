@@ -30,6 +30,12 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
         return Property.objects.filter(owner=self.request.user)
 
 
+class UnitDetailView(DetailView):
+    model = Unit
+    template_name = 'properties/unit_detail.html'
+    context_object_name = 'unit'
+
+
 class PropertyCreateView(LoginRequiredMixin, CreateView):
     model = Property
     form_class = PropertyForm
