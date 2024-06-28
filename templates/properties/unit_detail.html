@@ -1,60 +1,59 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <link rel="stylesheet" href="{% static 'photoswipe/dist/photoswipe.css' %}" />
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-6">
-                <h3>Image Gallery</h3>
-                <div class="pswp-gallery pswp-gallery--single-column"
-                     id="gallery--responsive-images">
-                    {% for image in unit.images.all %}
-                        <a href="{{ image.image.url }}"
-                           data-pswp-width="{{ image.width }}"
-                           data-pswp-height="{{ image.height }}"
-                           target="_blank">
-                            <img src="{{ image.image.url }}" alt="" class="img-fluid mb-2" />
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
-            <div class="col-md-6">
-                <h2>Unit Details: {{ unit.unit_number }}</h2>
-                <p>
-                    <strong>Property:</strong> {{ unit.property.name }}
-                </p>
-                <p>
-                    <strong>Location:</strong> {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}
-                </p>
-                <p>
-                    <strong>Description:</strong> {{ unit.description }}
-                </p>
-                <p>
-                    <strong>Number of Beds:</strong> {{ unit.num_beds }}
-                </p>
-                <p>
-                    <strong>Number of Bathrooms:</strong> {{ unit.num_bathrooms }}
-                </p>
-                <p>
-                    <strong>Number of Kitchens:</strong> {{ unit.num_kitchens }}
-                </p>
-                <p>
-                    <strong>Number of Living Rooms:</strong> {{ unit.num_living_rooms }}
-                </p>
-                <p>
-                    <strong>Number of Stores:</strong> {{ unit.num_stores }}
-                </p>
-            </div>
+  <link rel="stylesheet" href="{% static 'photoswipe/dist/photoswipe.css' %}" />
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6">
+        <h3>Image Gallery</h3>
+        <div class="pswp-gallery" id="my-gallery">
+          {% if unit.images.all %}
+            {% for image in unit.images.all %}
+              <a href="{{ image.image.url }}" data-pswp-width="{{ image.width }}" data-pswp-height="{{ image.height }}" target="_blank"><img src="{{ image.image.url }}" alt="Image of unit {{ unit.unit_number }}" /></a>
+            {% endfor %}
+          {% else %}
+            <p>No images available for this unit.</p>
+          {% endif %}
         </div>
+      </div>
+      <div class="col-md-6">
+        <h2>Unit Details: {{ unit.unit_number }}</h2>
+        <p>
+          <strong>Property:</strong> {{ unit.property.name }}
+        </p>
+        <p>
+          <strong>Location:</strong> {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}
+        </p>
+        <p>
+          <strong>Description:</strong> {{ unit.description }}
+        </p>
+        <p>
+          <strong>Number of Beds:</strong> {{ unit.num_beds }}
+        </p>
+        <p>
+          <strong>Number of Bathrooms:</strong> {{ unit.num_bathrooms }}
+        </p>
+        <p>
+          <strong>Number of Kitchens:</strong> {{ unit.num_kitchens }}
+        </p>
+        <p>
+          <strong>Number of Living Rooms:</strong> {{ unit.num_living_rooms }}
+        </p>
+        <p>
+          <strong>Number of Stores:</strong> {{ unit.num_stores }}
+        </p>
+      </div>
     </div>
-    <script type="module">
-    import PhotoSwipeLightbox from '{% static "photoswipe/dist/photoswipe-lightbox.esm.js" %}'
-    const options = {
-      gallery: '#gallery--responsive-images',
+  </div>
+  <script type="module">
+    import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe/dist/photoswipe-lightbox.esm.js'
+    
+    const lightbox = new PhotoSwipeLightbox({
+      gallery: '#my-gallery',
       children: 'a',
-      pswpModule: () => import('{% static "photoswipe/dist/photoswipe.esm.js" %}')
-    }
-    const lightbox = new PhotoSwipeLightbox(options)
+      pswpModule: () => import('https://unpkg.com/photoswipe')
+    })
+    
     lightbox.init()
-    </script>
+  </script>
 {% endblock %}
