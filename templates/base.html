@@ -132,14 +132,13 @@
                         </li>
                     </ul>
                 </aside>
-                {% endif %}
-                <div class="content">
-                    <main>
-                        {% block content %}{% endblock %}
-                    </main>
-                </div>
+            {% endif %}
+            <div class="content">
+                <main>
+                    {% block content %}{% endblock %}
+                </main>
             </div>
-        
+        </div>
         <script src="{% static 'js/popper.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/common.js' %}"></script>
