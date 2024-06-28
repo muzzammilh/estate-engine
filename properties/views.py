@@ -10,7 +10,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from gallery.forms import ImageFormSet
 from gallery.models import Image
 
-from .forms import PropertyForm, UnitForm
+from .forms import PropertyForm, TenantUnitFilterForm, UnitForm
 from .models import City, Property, State, SubLocality, Unit
 
 
@@ -28,6 +28,12 @@ class PropertyDetailView(LoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         return Property.objects.filter(owner=self.request.user)
+
+
+class UnitDetailView(DetailView):
+    model = Unit
+    template_name = 'properties/unit_detail.html'
+    context_object_name = 'unit'
 
 
 class PropertyCreateView(LoginRequiredMixin, CreateView):
@@ -182,6 +188,31 @@ class UnitDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_queryset(self):
         return Unit.objects.filter(property__owner=self.request.user)
+
+
+class AvailableUnitsView(ListView):
+    model = Unit
+    template_name = 'properties/available_units.html'
+    context_object_name = 'units'
+
+    def get_queryset(self):
+        queryset = Unit.objects.filter(is_available_for_rent=True)
+        form = TenantUnitFilterForm(self.request.GET)
+        if form.is_valid():
+            if form.cleaned_data['country']:
+                queryset = queryset.filter(property__country=form.cleaned_data['country'])
+            if form.cleaned_data['state']:
+                queryset = queryset.filter(property__state=form.cleaned_data['state'])
+            if form.cleaned_data['city']:
+                queryset = queryset.filter(property__city=form.cleaned_data['city'])
+            if form.cleaned_data['sub_locality']:
+                queryset = queryset.filter(property__sub_locality=form.cleaned_data['sub_locality'])
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = TenantUnitFilterForm(self.request.GET)
+        return context
 
 
 def load_states(request):

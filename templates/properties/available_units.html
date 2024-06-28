@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+{% block js %}
+    <script src="{% static 'js/cascade_dropdowns.js' %}"></script>
+{% endblock js %}
+{% block content %}
+    <h2>Available Units for Rent</h2>
+    <form method="get">
+        {{ filter_form.as_p }}
+        <button type="submit">Filter</button>
+    </form>
+    <ul>
+        {% for unit in units %}
+            <li>
+                <a href="{% url 'unit_detail' unit.pk %}">{{ unit.unit_number }} - {{ unit.property.name }} in {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}</a>
+            </li>
+        {% empty %}
+            <li>No units available for rent.</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+    <h2>Unit Details: {{ unit.unit_number }}</h2>
+    <p>
+        <strong>Property:</strong> {{ unit.property.name }}
+    </p>
+    <p>
+        <strong>Location:</strong> {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}
+    </p>
+    <p>
+        <strong>Description:</strong> {{ unit.description }}
+    </p>
+    <p>
+        <strong>Number of Beds:</strong> {{ unit.num_beds }}
+    </p>
+    <p>
+        <strong>Number of Bathrooms:</strong> {{ unit.num_bathrooms }}
+    </p>
+    <p>
+        <strong>Number of Kitchens:</strong> {{ unit.num_kitchens }}
+    </p>
+    <p>
+        <strong>Number of Living Rooms:</strong> {{ unit.num_living_rooms }}
+    </p>
+    <p>
+        <strong>Number of Stores:</strong> {{ unit.num_stores }}
+    </p>
+{% endblock content %}
