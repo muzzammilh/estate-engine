@@ -4,7 +4,10 @@
            data-pswp-width="{{ image.image.width }}"
            data-pswp-height="{{ image.image.height }}"
            target="_blank">
-            <img src="{{ image.image.url }}" alt="" />
+            <img src="{{ image.image.url }}"
+                 alt=""
+                 width="{{ image.image.width }}"
+                 height="{{ image.image.height }}" />
         </a>
     {% endfor %}
 </div>
