@@ -1,8 +1,6 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 {% block content %}
-    <link rel="stylesheet"
-          href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css" />
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-6">
@@ -40,5 +38,5 @@
     </div>
     {% block js %}
         <script type="module" src="{% static 'js/gallery.js' %}"></script>
-    {% endblock %}
-{% endblock %}
+    {% endblock js %}
+{% endblock content %}

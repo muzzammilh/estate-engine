@@ -6,12 +6,15 @@
               content="Simplify property management with our open source system. From tenant management to financial tracking, our platform offers all the tools you need for success" />
         <meta name="keywords" content="property, tenant" />
         <title>
-            {% block title %}{% endblock %}
+            {% block title %}
+            {% endblock title %}
             - Estate Engine
         </title>
         <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
         <link rel="stylesheet" href="{% static 'css/common.css' %}" />
+        <link rel="stylesheet"
+              href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css" />
     </head>
     <body>
         {% if user.is_authenticated %}
@@ -135,13 +138,15 @@
             {% endif %}
             <div class="content">
                 <main>
-                    {% block content %}{% endblock %}
+                    {% block content %}
+                    {% endblock content %}
                 </main>
             </div>
         </div>
         <script src="{% static 'js/popper.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/common.js' %}"></script>
-        {% block js %}{% endblock %}
+        {% block js %}
+        {% endblock js %}
     </body>
 </html>
