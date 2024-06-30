@@ -40,7 +40,7 @@ class UnitDetailView(DetailView):
         context['images'] = self.object.images.all()
         return context
 
-
+      
 class PropertyCreateView(LoginRequiredMixin, CreateView):
     model = Property
     form_class = PropertyForm
