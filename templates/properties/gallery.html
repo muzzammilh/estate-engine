@@ -1,0 +1,13 @@
+<div class="pswp-gallery" id="my-gallery">
+    {% for image in unit.images.all %}
+        <a href="{{ image.image.url }}"
+           data-pswp-width="{{ image.image.width }}"
+           data-pswp-height="{{ image.image.height }}"
+           target="_blank">
+            <img src="{{ image.image.url }}"
+                 alt=""
+                 width="{{ image.image.width }}"
+                 height="{{ image.image.height }}" />
+        </a>
+    {% endfor %}
+</div>
