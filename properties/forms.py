@@ -13,7 +13,7 @@ class PropertyForm(forms.ModelForm):
 
     class Meta:
         model = Property
-        fields = ['name', 'country', 'state', 'city', 'sub_locality', 'address', 'square_feet', 'description']
+        fields = ['name', 'country', 'state', 'city', 'sub_locality', 'address', 'square_feet', 'description', 'currency']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -56,7 +56,8 @@ class UnitForm(forms.ModelForm):
             'num_kitchens',
             'num_living_rooms',
             'num_stores',
-            'is_available_for_rent'
+            'is_available_for_rent',
+            'rent_per_month'
         ]
 
 
