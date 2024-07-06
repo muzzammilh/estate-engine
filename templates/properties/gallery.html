@@ -7,7 +7,21 @@
             <img src="{{ image.image.url }}"
                  alt=""
                  width="{{ image.image.width }}"
-                 height="{{ image.image.height }}" />
+                 height="{{ image.image.height }}"
+                 class="pswp-gallery-image" />
         </a>
     {% endfor %}
 </div>
+<style>
+  .pswp-gallery-image {
+    width: 100%;  /* Default width for all images */
+  }
+
+  /* Media queries for responsive scaling */
+  @media (min-width: 768px) {  /* Adjust breakpoint as needed */
+    .pswp-gallery-image {
+      width: auto;  /* Allow width to adjust for landscape images */
+      max-height: 150px;  /* Set a maximum height for portrait on larger screens */
+    }
+  }
+</style>
