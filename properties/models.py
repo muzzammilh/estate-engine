@@ -37,6 +37,14 @@ class SubLocality(BasedModel):
         return self.name
 
 
+class Currency(models.Model):
+    code = models.CharField(max_length=3, unique=True)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
 class Property(BasedModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
@@ -48,6 +56,7 @@ class Property(BasedModel):
     description = models.TextField(blank=True, null=True)
     square_feet = models.PositiveIntegerField()
     is_leased = models.BooleanField(default=False)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT, blank=True, null=True)
     images = GenericRelation('gallery.Image')
 
     def __str__(self):
@@ -72,6 +81,7 @@ class Unit(BasedModel):
     num_stores = models.PositiveIntegerField()
     images = GenericRelation('gallery.Image')
     is_available_for_rent = models.BooleanField(default=False)
+    rent_per_month = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return f"Unit {self.unit_number} in {self.property.name}"
