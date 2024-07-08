@@ -40,6 +40,8 @@
                 <p>
                     <strong>Rent Per Month:</strong> {{ unit.rent_per_month }}
                 </p>
+                <a href="{% url 'upload_documents' unit.id %}"
+                   class="btn btn-primary mt-3">Upload Images</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Applied Tenants for Unit {{ unit.unit_number }} - {{ unit.property.name }}
+{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Applied Tenants for Unit {{ unit.unit_number }} - {{ unit.property.name }}</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tenant Email</th>
+                        <th>Status</th>
+                        <th>Documents</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tenant_info in applied_tenants %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ tenant_info.tenant.email }}</td>
+                        <td>{{ tenant_info.status }}</td>
+                        <td>
+                            {% if tenant_info.document_images %}
+                                {% for image in tenant_info.document_images %}
+                                    <a href="{{ image.image.url }}" target="_blank">
+                                        <img src="{{ image.image.url }}" alt="{{ image.caption }}" style="max-width: 100px; max-height: 100px; margin-right: 10px;">
+                                    </a>
+                                {% endfor %}
+                            {% else %}
+                                No documents uploaded.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No tenants applied for this unit yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,17 +1,18 @@
-# properties/views.py
-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+                                  TemplateView, UpdateView)
 
-from gallery.forms import ImageFormSet
+from gallery.forms import DocFormSet, ImageFormSet
 from gallery.models import Image
 
 from .forms import PropertyForm, TenantUnitFilterForm, UnitForm
-from .models import City, Property, State, SubLocality, Unit
+from .models import City, Document, Property, State, SubLocality, Unit
 
 
 class PropertyListView(LoginRequiredMixin, ListView):
@@ -236,3 +237,76 @@ def load_sub_localities(request):
     city_id = request.GET.get('city_id')
     sub_localities = SubLocality.objects.filter(city_id=city_id).order_by('name')
     return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
+
+
+class UploadDocumentsView(View):
+    DocFormSet = DocFormSet
+
+    def get(self, request, unit_id):
+        unit = get_object_or_404(Unit, pk=unit_id)
+        formset = self.DocFormSet(queryset=Image.objects.none())
+
+        return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
+
+    def post(self, request, unit_id):
+        unit = get_object_or_404(Unit, pk=unit_id)
+        document = Document(unit=unit, tenant=request.user, status='pending')
+        document.save()
+
+        formset = self.DocFormSet(request.POST, request.FILES)
+
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.content_object = document
+                instance.save()
+
+            return redirect('user_applied_units')
+
+        return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
+
+
+class UserAppliedUnitsView(TemplateView):
+    template_name = 'properties/user_applied_units.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        documents = Document.objects.filter(tenant=user)
+
+        applied_units = [
+            {
+                'unit': document.unit,
+                'status': document.status,
+            }
+            for document in documents
+        ]
+
+        context['applied_units'] = applied_units
+        return context
+
+
+class UnitAppliedTenantsView(TemplateView):
+    template_name = 'properties/unit_applied_tenants.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        unit_id = self.kwargs.get('unit_id')
+        unit = get_object_or_404(Unit, pk=unit_id)
+        documents = Document.objects.filter(unit=unit)
+
+        applied_tenants = []
+        for document in documents:
+            tenant = get_object_or_404(get_user_model(), id=document.tenant_id)
+            document_images = Image.objects.filter(content_type=ContentType.objects.get_for_model(Document), object_id=document.id)
+            tenant_info = {
+                'tenant': tenant,
+                'status': document.get_status_display(),
+                'document_images': document_images
+            }
+            applied_tenants.append(tenant_info)
+
+        context['unit'] = unit
+        context['applied_tenants'] = applied_tenants
+        return context
