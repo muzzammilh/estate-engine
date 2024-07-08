@@ -2,7 +2,7 @@
 
 from django import forms
 
-from .models import City, Country, Property, State, SubLocality, Unit
+from .models import City, Country, Document, Property, State, SubLocality, Unit
 
 
 class PropertyForm(forms.ModelForm):
@@ -89,3 +89,13 @@ class TenantUnitFilterForm(forms.Form):
                 self.fields['sub_locality'].queryset = SubLocality.objects.filter(city_id=city_id).order_by('name')
             except (ValueError, TypeError):
                 pass
+
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ['front_image', 'back_image']
+        widgets = {
+            'front_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'back_image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }

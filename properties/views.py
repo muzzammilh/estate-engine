@@ -4,14 +4,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
+                                  ListView, TemplateView, UpdateView)
 
 from gallery.forms import ImageFormSet
 from gallery.models import Image
 
-from .forms import PropertyForm, TenantUnitFilterForm, UnitForm
-from .models import City, Property, State, SubLocality, Unit
+from .forms import DocumentForm, PropertyForm, TenantUnitFilterForm, UnitForm
+from .models import City, Document, Property, State, SubLocality, Unit
 
 
 class PropertyListView(LoginRequiredMixin, ListView):
@@ -217,6 +217,47 @@ class AvailableUnitsView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter_form'] = TenantUnitFilterForm(self.request.GET)
+        return context
+
+
+class UploadDocumentsView(FormView):
+    template_name = 'properties/upload_documents.html'
+    form_class = DocumentForm
+
+    def form_valid(self, form):
+        unit_id = self.kwargs['unit_id']
+        unit = get_object_or_404(Unit, pk=unit_id)
+        document = form.save(commit=False)
+        document.unit = unit
+        document.user = self.request.user
+        document.save()
+
+        return redirect('user_applied_units')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        unit_id = self.kwargs['unit_id']
+        context['unit'] = get_object_or_404(Unit, pk=unit_id)
+        return context
+
+
+class UserAppliedUnitsView(TemplateView):
+    template_name = 'properties/user_applied_units.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        documents = Document.objects.filter(user=user)
+        applied_units = []
+
+        for document in documents:
+            unit_info = {
+                'unit': document.unit,
+                'status': document.status,
+            }
+            applied_units.append(unit_info)
+
+        context['applied_units'] = applied_units
         return context
 
 

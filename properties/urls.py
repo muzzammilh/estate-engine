@@ -1,12 +1,10 @@
-# properties/urls.py
-
 from django.urls import path
 
 from .views import (AvailableUnitsView, PropertyCreateView, PropertyDeleteView,
                     PropertyDetailView, PropertyListView, PropertyUpdateView,
                     UnitCreateView, UnitDeleteView, UnitDetailView,
-                    UnitUpdateView, load_cities, load_states,
-                    load_sub_localities)
+                    UnitUpdateView, UploadDocumentsView, UserAppliedUnitsView,
+                    load_cities, load_states, load_sub_localities)
 
 urlpatterns = [
     path('', PropertyListView.as_view(), name='property_list'),
@@ -22,4 +20,6 @@ urlpatterns = [
     path('ajax/load-states/', load_states, name='ajax_load_states'),
     path('ajax/load-cities/', load_cities, name='ajax_load_cities'),
     path('ajax/load-sub-localities/', load_sub_localities, name='ajax_load_sub_localities'),
+    path('upload-documents/<int:unit_id>', UploadDocumentsView.as_view(), name='upload_documents'),
+    path('user-applied-units/', UserAppliedUnitsView.as_view(), name='user_applied_units'),
 ]
