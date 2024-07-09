@@ -241,8 +241,6 @@ def load_sub_localities(request):
 
 
 # view for document uploads
-
-
 class UploadDocumentsView(View):
     DocFormSet = DocFormSet
 
@@ -250,27 +248,28 @@ class UploadDocumentsView(View):
         unit = get_object_or_404(Unit, pk=unit_id)
         formset = self.DocFormSet(queryset=Image.objects.none())
 
-        existing_document = Document.objects.filter(unit=unit, tenant=request.user).first()
+        existing_pending_document = Document.objects.filter(unit=unit, tenant=request.user, status='pending').first()
 
-        if existing_document:
-            if existing_document.status == 'pending':
-                messages.warning(request, "You have already applied for this unit.")
-                return redirect('user_applied_units')
+        if existing_pending_document:
+            messages.warning(request, "You have already applied for this unit.")
+            return redirect('user_applied_units')
 
         return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
 
     def post(self, request, unit_id):
         unit = get_object_or_404(Unit, pk=unit_id)
 
-        existing_document = Document.objects.filter(unit=unit, tenant=request.user).first()
+        existing_pending_document = Document.objects.filter(unit=unit, tenant=request.user, status='pending').first()
 
-        if existing_document:
-            if existing_document.status == 'pending':
-                messages.warning(request, "You have already applied for this unit.")
-                return redirect('user_applied_units')
-            elif existing_document.status == 'rejected':
-                new_document = Document(unit=unit, tenant=request.user, status='pending')
-                new_document.save()
+        if existing_pending_document:
+            messages.warning(request, "You have already applied for this unit.")
+            return redirect('user_applied_units')
+
+        existing_rejected_document = Document.objects.filter(unit=unit, tenant=request.user, status='rejected').first()
+
+        if existing_rejected_document:
+            new_document = Document(unit=unit, tenant=request.user, status='pending')
+            new_document.save()
         else:
             new_document = Document(unit=unit, tenant=request.user, status='pending')
             new_document.save()
@@ -283,14 +282,14 @@ class UploadDocumentsView(View):
                 instance.content_object = new_document
                 instance.save()
 
+            messages.success(request, "Documents uploaded successfully.")
             return redirect('user_applied_units')
 
+        messages.error(request, "There was an error uploading your documents. Please try again.")
         return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
 
 
 # view for the units user applied
-
-
 class UserAppliedUnitsView(TemplateView):
     template_name = 'properties/user_applied_units.html'
 
@@ -313,8 +312,6 @@ class UserAppliedUnitsView(TemplateView):
 
 
 # view for unit applied by tenants
-
-
 class UnitAppliedTenantsView(ListView):
     template_name = 'properties/unit_applied_tenants.html'
     context_object_name = 'applied_tenants'
@@ -348,8 +345,6 @@ class UnitAppliedTenantsView(ListView):
 
 
 # view for status changes
-
-
 class UpdateDocumentStatusView(View):
     def post(self, request, document_id, *args, **kwargs):
         status = request.POST.get('status')
