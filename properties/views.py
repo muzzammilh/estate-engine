@@ -240,6 +240,9 @@ def load_sub_localities(request):
     return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
 
 
+# view for document uploads
+
+
 class UploadDocumentsView(View):
     DocFormSet = DocFormSet
 
@@ -285,6 +288,9 @@ class UploadDocumentsView(View):
         return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
 
 
+# view for the units user applied
+
+
 class UserAppliedUnitsView(TemplateView):
     template_name = 'properties/user_applied_units.html'
 
@@ -306,12 +312,15 @@ class UserAppliedUnitsView(TemplateView):
         return context
 
 
-class UnitAppliedTenantsView(TemplateView):
-    template_name = 'properties/unit_applied_tenants.html'
-    success_url_name = 'unit_applied_tenants'
+# view for unit applied by tenants
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+
+class UnitAppliedTenantsView(ListView):
+    template_name = 'properties/unit_applied_tenants.html'
+    context_object_name = 'applied_tenants'
+    paginate_by = 5
+
+    def get_queryset(self):
         unit_id = self.kwargs.get('unit_id')
         unit = get_object_or_404(Unit, pk=unit_id)
         documents = Document.objects.filter(unit=unit)
@@ -327,12 +336,18 @@ class UnitAppliedTenantsView(TemplateView):
                 'document_id': document.id
             }
             applied_tenants.append(tenant_info)
+        return applied_tenants
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        unit_id = self.kwargs.get('unit_id')
+        unit = get_object_or_404(Unit, pk=unit_id)
         context['unit'] = unit
-        context['applied_tenants'] = applied_tenants
         context['documents'] = Document.STATUS_CHOICES
-
         return context
+
+
+# view for status changes
 
 
 class UpdateDocumentStatusView(View):
