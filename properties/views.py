@@ -341,6 +341,12 @@ class UpdateDocumentStatusView(View):
 
         document = get_object_or_404(Document, id=document_id)
 
+        if status == 'approved':
+            existing_approved_documents = Document.objects.filter(unit=document.unit, status='approved').exclude(id=document.id)
+            if existing_approved_documents.exists():
+                messages.warning(request, "Another tenant has already been approved for this unit.")
+                return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
         document.status = status
         document.save()
 
@@ -352,5 +358,6 @@ class UpdateDocumentStatusView(View):
             unit = document.unit
             unit.is_available_for_rent = True
             unit.save()
+
         messages.success(request, f"Document status updated to '{status}'.")
         return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
