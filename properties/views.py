@@ -289,6 +289,7 @@ class UserAppliedUnitsView(TemplateView):
 
 class UnitAppliedTenantsView(TemplateView):
     template_name = 'properties/unit_applied_tenants.html'
+    success_url_name = 'unit_applied_tenants'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -302,11 +303,30 @@ class UnitAppliedTenantsView(TemplateView):
             document_images = Image.objects.filter(content_type=ContentType.objects.get_for_model(Document), object_id=document.id)
             tenant_info = {
                 'tenant': tenant,
-                'status': document.get_status_display(),
-                'document_images': document_images
+                'status': document.status,
+                'document_images': document_images,
+                'document_id': document.id
             }
             applied_tenants.append(tenant_info)
 
         context['unit'] = unit
         context['applied_tenants'] = applied_tenants
+        context['documents'] = Document.STATUS_CHOICES
+
         return context
+
+
+class UpdateDocumentStatusView(View):
+    def post(self, request, document_id, *args, **kwargs):
+        status = request.POST.get('status')
+
+        document = get_object_or_404(Document, id=document_id)
+        document.status = status
+        document.save()
+
+        if status == 'approved':
+            unit = document.unit
+            unit.is_available_for_rent = False
+            unit.save()
+
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
