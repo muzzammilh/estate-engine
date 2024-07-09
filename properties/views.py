@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
@@ -246,19 +247,37 @@ class UploadDocumentsView(View):
         unit = get_object_or_404(Unit, pk=unit_id)
         formset = self.DocFormSet(queryset=Image.objects.none())
 
+        existing_document = Document.objects.filter(unit=unit, tenant=request.user).first()
+
+        if existing_document:
+            if existing_document.status == 'pending':
+                messages.warning(request, "You have already applied for this unit.")
+                return redirect('user_applied_units')
+
         return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
 
     def post(self, request, unit_id):
         unit = get_object_or_404(Unit, pk=unit_id)
-        document = Document(unit=unit, tenant=request.user, status='pending')
-        document.save()
+
+        existing_document = Document.objects.filter(unit=unit, tenant=request.user).first()
+
+        if existing_document:
+            if existing_document.status == 'pending':
+                messages.warning(request, "You have already applied for this unit.")
+                return redirect('user_applied_units')
+            elif existing_document.status == 'rejected':
+                new_document = Document(unit=unit, tenant=request.user, status='pending')
+                new_document.save()
+        else:
+            new_document = Document(unit=unit, tenant=request.user, status='pending')
+            new_document.save()
 
         formset = self.DocFormSet(request.POST, request.FILES)
 
         if formset.is_valid():
             instances = formset.save(commit=False)
             for instance in instances:
-                instance.content_object = document
+                instance.content_object = new_document
                 instance.save()
 
             return redirect('user_applied_units')
@@ -321,6 +340,7 @@ class UpdateDocumentStatusView(View):
         status = request.POST.get('status')
 
         document = get_object_or_404(Document, id=document_id)
+
         document.status = status
         document.save()
 
@@ -328,5 +348,9 @@ class UpdateDocumentStatusView(View):
             unit = document.unit
             unit.is_available_for_rent = False
             unit.save()
-
+        elif status == 'rejected' or status == 'pending':
+            unit = document.unit
+            unit.is_available_for_rent = True
+            unit.save()
+        messages.success(request, f"Document status updated to '{status}'.")
         return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
