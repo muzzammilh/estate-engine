@@ -9,6 +9,7 @@
 {% endblock custom_css %}
 {% block content %}
     <div class="container mt-4">
+        <div id="messages"></div>
         <h2>Applied Tenants for Unit {{ unit.unit_number }} - {{ unit.property.name }}</h2>
         <div class="row">
             <div class="col-md-12">
@@ -17,7 +18,6 @@
                         <table class="table table-bordered">
                             <thead class="thead-light">
                                 <tr>
-                                    <th>#</th>
                                     <th>Tenant Email</th>
                                     <th>Status</th>
                                     <th>Documents</th>
@@ -26,11 +26,12 @@
                             <tbody>
                                 {% for tenant_info in applied_tenants %}
                                     <tr>
-                                        <td>{{ forloop.counter }}</td>
                                         <td>{{ tenant_info.tenant.email }}</td>
                                         <td>
-                                            <form method="post"
-                                                  action="{% url 'update_document_status' tenant_info.document_id %}">
+                                            <form class="update-status-form"
+                                                  action="{% url 'update_document_status' document_id=tenant_info.document_id %}"
+                                                  method="post"
+                                                  data-document-id="{{ tenant_info.document_id }}">
                                                 {% csrf_token %}
                                                 <select name="status" class="form-control">
                                                     {% for status_value, status_label in documents %}
@@ -76,4 +77,5 @@
 {% endblock content %}
 {% block js %}
     <script type="module" src="{% static 'js/gallery.js' %}"></script>
+    <script type="module" src="{% static 'js/document_status_update.js' %}"></script>
 {% endblock js %}
