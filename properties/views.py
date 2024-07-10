@@ -360,14 +360,18 @@ class UpdateDocumentStatusView(View):
         document.status = status
         document.save()
 
+        unit = document.unit
         if status == 'approved':
-            unit = document.unit
-            unit.is_available_for_rent = False
-            unit.save()
+            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
+                unit.is_available_for_rent = False
+            else:
+                unit.is_available_for_rent = False
         elif status == 'rejected' or status == 'pending':
-            unit = document.unit
-            unit.is_available_for_rent = True
-            unit.save()
+            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
+                unit.is_available_for_rent = False
+            else:
+                unit.is_available_for_rent = True
+        unit.save()
 
         message = f"Document status updated to '{status}'."
         return JsonResponse({'message': message, 'status': 'success', 'new_status': status})
