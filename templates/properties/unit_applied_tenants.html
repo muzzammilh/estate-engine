@@ -3,6 +3,10 @@
 {% block title %}
     Applied Tenants for Unit
 {% endblock title %}
+{% block custom_css %}
+    <link rel="stylesheet"
+          href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css" />
+{% endblock custom_css %}
 {% block content %}
     <div class="container mt-4">
         <h2>Applied Tenants for Unit {{ unit.unit_number }} - {{ unit.property.name }}</h2>
@@ -41,20 +45,15 @@
                                         </td>
                                         <td>
                                             {% if tenant_info.document_images %}
-                                                <div class="d-flex flex-wrap">
-                                                    {% for image in tenant_info.document_images %}
-                                                        <a href="{{ image.image.url }}"
-                                                           target="_blank"
-                                                           class="d-block mr-2 mb-2">
-                                                            <img src="{{ image.image.url }}"
-                                                                 width="100"
-                                                                 height="100"
-                                                                 alt="{{ image.caption }}"
-                                                                 style="max-width: 100px;
-                                                                        max-height: 100px"
-                                                                 class="img-thumbnail">
-                                                        </a>
-                                                    {% endfor %}
+                                                <div class="d-inline-block">
+                                                    <div class="pswp-gallery"
+                                                         id="my-gallery"
+                                                         style="max-height: 150px;
+                                                                overflow-y: auto">
+                                                        {% for image in tenant_info.document_images %}
+                                                            {% include "properties/gallery.html" %}
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
                                             {% else %}
                                                 No documents uploaded.
@@ -75,3 +74,6 @@
         </div>
     </div>
 {% endblock content %}
+{% block js %}
+    <script type="module" src="{% static 'js/gallery.js' %}"></script>
+{% endblock js %}
