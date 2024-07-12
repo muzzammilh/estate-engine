@@ -95,7 +95,11 @@ class Unit(BasedModel):
 
 
 class Document(BasedModel):
-    STATUS_CHOICES = (('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected'),)
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name='documents')
     tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
