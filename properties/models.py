@@ -92,3 +92,18 @@ class Unit(BasedModel):
     def delete(self, *args, **kwargs):
         self.images.all().delete()
         super().delete(*args, **kwargs)
+
+
+class Document(BasedModel):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    )
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name='documents')
+    tenant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    images = GenericRelation('gallery.Image')
+
+    def __str__(self):
+        return f"Images for Unit {self.unit.unit_number}"

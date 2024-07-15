@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Applied Tenants for Unit
+{% endblock title %}
+{% block custom_css %}
+    <link rel="stylesheet"
+          href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css" />
+{% endblock custom_css %}
+{% block content %}
+    <div class="container mt-4">
+        <div id="messages"></div>
+        <h2>Applied Tenants for Unit {{ unit.unit_number }} - {{ unit.property.name }}</h2>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Tenant Email</th>
+                                    <th>Status</th>
+                                    <th>Documents</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tenant_info in applied_tenants %}
+                                    <tr>
+                                        <td>{{ tenant_info.tenant.email }}</td>
+                                        <td>
+                                            <form class="update-status-form"
+                                                  action="{% url 'update_document_status' document_id=tenant_info.document_id %}"
+                                                  method="post"
+                                                  data-document-id="{{ tenant_info.document_id }}">
+                                                {% csrf_token %}
+                                                <select name="status" class="form-control">
+                                                    {% for status_value, status_label in documents %}
+                                                        <option value="{{ status_value }}"
+                                                                {% if tenant_info.status == status_value %}selected{% endif %}>
+                                                            {{ status_label }}
+                                                        </option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="btn btn-primary mt-2">Update</button>
+                                            </form>
+                                        </td>
+                                        <td>
+                                            {% if tenant_info.document_images %}
+                                                <div class="d-inline-block">
+                                                    <div class="pswp-gallery"
+                                                         id="my-gallery"
+                                                         style="max-height: 150px;
+                                                                overflow-y: auto">
+                                                        {% for image in tenant_info.document_images %}
+                                                            {% include "properties/gallery.html" %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                No documents uploaded.
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4">No tenants applied for this unit yet.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% include "properties/pagination_controls.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    <script type="module" src="{% static 'js/gallery.js' %}"></script>
+    <script type="module" src="{% static 'js/document_status_update.js' %}"></script>
+{% endblock js %}

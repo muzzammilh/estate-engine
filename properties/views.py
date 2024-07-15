@@ -1,17 +1,19 @@
-# properties/views.py
-
+from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+                                  TemplateView, UpdateView)
 
-from gallery.forms import ImageFormSet
+from gallery.forms import DocFormSet, ImageFormSet
 from gallery.models import Image
 
 from .forms import PropertyForm, TenantUnitFilterForm, UnitForm
-from .models import City, Property, State, SubLocality, Unit
+from .models import City, Document, Property, State, SubLocality, Unit
 
 
 class PropertyListView(LoginRequiredMixin, ListView):
@@ -236,3 +238,140 @@ def load_sub_localities(request):
     city_id = request.GET.get('city_id')
     sub_localities = SubLocality.objects.filter(city_id=city_id).order_by('name')
     return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
+
+
+# view for document uploads
+class UploadDocumentsView(View):
+    DocFormSet = DocFormSet
+
+    def get(self, request, unit_id):
+        unit = get_object_or_404(Unit, pk=unit_id)
+        formset = self.DocFormSet(queryset=Image.objects.none())
+
+        existing_pending_document = Document.objects.filter(unit=unit, tenant=request.user, status='pending').first()
+
+        if existing_pending_document:
+            messages.warning(request, "You have already applied for this unit.")
+            return redirect('user_applied_units')
+
+        return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
+
+    def post(self, request, unit_id):
+        unit = get_object_or_404(Unit, pk=unit_id)
+
+        existing_pending_document = Document.objects.filter(unit=unit, tenant=request.user, status='pending').first()
+
+        if existing_pending_document:
+            messages.warning(request, "You have already applied for this unit.")
+            return redirect('user_applied_units')
+
+        existing_rejected_document = Document.objects.filter(unit=unit, tenant=request.user, status='rejected').first()
+
+        if existing_rejected_document:
+            new_document = Document(unit=unit, tenant=request.user, status='pending')
+            new_document.save()
+        else:
+            new_document = Document(unit=unit, tenant=request.user, status='pending')
+            new_document.save()
+
+        formset = self.DocFormSet(request.POST, request.FILES)
+
+        if formset.is_valid():
+            instances = formset.save(commit=False)
+            for instance in instances:
+                instance.content_object = new_document
+                instance.save()
+
+            messages.success(request, "Documents uploaded successfully.")
+            return redirect('user_applied_units')
+
+        messages.error(request, "There was an error uploading your documents. Please try again.")
+        return render(request, 'properties/upload_documents.html', {'unit': unit, 'formset': formset})
+
+
+# view for the units user applied
+class UserAppliedUnitsView(TemplateView):
+    template_name = 'properties/user_applied_units.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        documents = Document.objects.filter(tenant=user)
+
+        applied_units = [
+            {
+                'unit': document.unit,
+                'status': document.status,
+            }
+            for document in documents
+        ]
+
+        context['applied_units'] = applied_units
+        return context
+
+
+# view for unit applied by tenants
+class UnitAppliedTenantsView(ListView):
+    template_name = 'properties/unit_applied_tenants.html'
+    context_object_name = 'applied_tenants'
+    paginate_by = 5
+
+    def get_queryset(self):
+        unit_id = self.kwargs.get('unit_id')
+        unit = get_object_or_404(Unit, pk=unit_id)
+        documents = Document.objects.filter(unit=unit)
+
+        applied_tenants = []
+        for document in documents:
+            tenant = get_object_or_404(get_user_model(), id=document.tenant_id)
+            document_images = Image.objects.filter(content_type=ContentType.objects.get_for_model(Document), object_id=document.id)
+            tenant_info = {
+                'tenant': tenant,
+                'status': document.status,
+                'document_images': document_images,
+                'document_id': document.id
+            }
+            applied_tenants.append(tenant_info)
+        return applied_tenants
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        unit_id = self.kwargs.get('unit_id')
+        unit = get_object_or_404(Unit, pk=unit_id)
+        context['unit'] = unit
+        context['documents'] = Document.STATUS_CHOICES
+        return context
+
+
+# view for status changes
+class UpdateDocumentStatusView(View):
+    def post(self, request, document_id, *args, **kwargs):
+        status = request.POST.get('status')
+
+        document = get_object_or_404(Document, id=document_id)
+
+        if status == 'approved':
+            existing_approved_documents = Document.objects.filter(unit=document.unit, status='approved').exclude(id=document.id)
+            if existing_approved_documents.exists():
+                message = "Another tenant has already been approved for this unit."
+                return JsonResponse({'message': message, 'status': 'error', 'new_status': document.status})
+
+        document.status = status
+        document.save()
+
+        unit = document.unit
+        if status == 'approved':
+            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
+                unit.is_available_for_rent = False
+            else:
+                unit.is_available_for_rent = False
+        elif status == 'rejected' or status == 'pending':
+            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
+                unit.is_available_for_rent = False
+            else:
+                unit.is_available_for_rent = True
+        unit.save()
+
+        message = f"Document status updated to '{status}'."
+        return JsonResponse({'message': message, 'status': 'success', 'new_status': status})

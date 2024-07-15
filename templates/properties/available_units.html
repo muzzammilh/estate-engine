@@ -4,18 +4,32 @@
     <script src="{% static 'js/cascade_dropdowns.js' %}"></script>
 {% endblock js %}
 {% block content %}
-    <h2>Available Units for Rent</h2>
-    <form method="get">
-        {{ filter_form.as_p }}
-        <button type="submit">Filter</button>
-    </form>
-    <ul>
-        {% for unit in units %}
-            <li>
-                <a href="{% url 'unit_detail' unit.pk %}">{{ unit.unit_number }} - {{ unit.property.name }} in {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}</a>
-            </li>
-        {% empty %}
-            <li>No units available for rent.</li>
-        {% endfor %}
-    </ul>
+    <div class="container mt-4">
+        <h2>Available Units for Rent</h2>
+        <form method="get" class="mb-4">
+            <div class="row">
+                <div class="col-md-8">{{ filter_form.as_p }}</div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                </div>
+            </div>
+        </form>
+        <ul class="list-group">
+            {% for unit in units %}
+                <li class="list-group-item">
+                    <div>
+                        <h5 class="mb-1">
+                            <a href="{% url 'unit_detail' unit.pk %}" class="text-decoration-none">{{ unit.unit_number }}</a>
+                            - {{ unit.property.name }}
+                        </h5>
+                        <p class="mb-1">
+                            {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}
+                        </p>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No units available for rent.</li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock content %}
