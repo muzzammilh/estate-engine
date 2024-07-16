@@ -22,9 +22,7 @@
                         <tbody>
                             {% for contract in contracts %}
                                 <tr>
-                                    <td>
-                                        {{ contract.tenant.email }}
-                                    </td>
+                                    <td>{{ contract.tenant.email }}</td>
                                     <td>{{ contract.unit }}</td>
                                     <td>{{ contract.start_date }}</td>
                                     <td>{{ contract.end_date }}</td>
