@@ -12,7 +12,6 @@ urlpatterns = [
     path('user/', include('users.urls')),
     path('property/', include('properties.urls')),
     path('contract/', include('contracts.urls')),
-
     path('logging/', LoggingExampleView, name='home'),
 ]
 
