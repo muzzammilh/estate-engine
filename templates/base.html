@@ -158,6 +158,26 @@
                                 </ul>
                             </li>
                         {% endif %}
+                        {% if user.role == user.TENANT %}
+                            <li class="sidebar-item">
+                                <a href="#"
+                                   class="sidebar-link collapsed has-dropdown"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#contract-dropdown"
+                                   aria-expanded="false"
+                                   aria-controls="contract-dropdown">
+                                    <i class="lni lni-book"></i>
+                                    <span>Contract</span>
+                                </a>
+                                <ul id="contract-dropdown"
+                                    class="sidebar-dropdown list-unstyled collapse"
+                                    data-bs-parent="#sidebar">
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'your_contracts' %}" class="sidebar-link">Your Contracts</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
                         <li class="sidebar-item">
                             <a href="#"
                                class="sidebar-link collapsed has-dropdown"

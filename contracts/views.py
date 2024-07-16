@@ -83,6 +83,10 @@ class ContractUpdateView(UpdateView):
     template_name = 'contracts/contract_update.html'
     success_url = reverse_lazy('all_contracts')
 
+    def form_valid(self, form):
+        messages.success(self.request, 'Contract updated successfully.')
+        return super().form_valid(form)
+
 
 # delete contract
 class ContractDeleteView(DeleteView):
@@ -99,3 +103,12 @@ class ContractDeleteView(DeleteView):
         success_url = self.get_success_url()
         self.object.delete()
         return redirect(success_url)
+
+
+# to show contracts for use
+class TenantContractsView(ListView):
+    template_name = 'contracts/user_contracts_list.html'
+    context_object_name = 'contracts'
+
+    def get_queryset(self):
+        return TenancyContract.objects.filter(tenant=self.request.user)

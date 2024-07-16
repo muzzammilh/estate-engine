@@ -16,6 +16,7 @@
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Rent Agreed</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -26,6 +27,12 @@
                                     <td>{{ contract.start_date }}</td>
                                     <td>{{ contract.end_date }}</td>
                                     <td>{{ contract.rent_agreed }}</td>
+                                    <td>
+                                        <a href="{% url 'update_contract' contract.id %}"
+                                           class="btn btn-primary btn-sm">Edit</a>
+                                        <a href="{% url 'delete_contract' contract.id %}"
+                                           class="btn btn-danger btn-sm">Delete</a>
+                                    </td>
                                 </tr>
                             {% endfor %}
                         </tbody>

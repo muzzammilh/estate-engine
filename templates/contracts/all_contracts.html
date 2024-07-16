@@ -28,7 +28,13 @@
                                     <td>{{ contract.start_date }}</td>
                                     <td>{{ contract.end_date }}</td>
                                     <td>{{ contract.rent_agreed }}</td>
-                                    <td>{{ contract.active|yesno:"Yes,No" }}</td>
+                                    <td>
+                                        {% if contract.active %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        {% endif %}
+                                    </td>
                                     <td>
                                         <a href="{% url 'update_contract' contract.id %}"
                                            class="btn btn-primary btn-sm">Edit</a>
