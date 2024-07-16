@@ -27,11 +27,15 @@
                                             {% csrf_token %}
                                             <td>{{ document.tenant.email }}</td>
                                             <td>
-                                                <a href="{% url 'unit_detail' document.unit.id %}"
-                                                   class="text-decoration-none">{{ document.unit }}</a>
+                                                {{ document.unit }}
                                                 <input type='hidden' name="unit_id" value="{{ document.unit.id }}">
                                             </td>
-                                            <td>{{ document.status }}</td>
+                                            <td>
+                                                <span style="background-color: #28a745;
+                                                             color: white;
+                                                             padding: 4px 8px;
+                                                             border-radius: 4px">{{ document.status }}</span>
+                                            </td>
                                             <td>
                                                 <button type="submit"
                                                         formaction="{% url 'create_contract' document.tenant.id %}"

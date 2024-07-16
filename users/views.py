@@ -137,3 +137,14 @@ class ApprovedTenantsView(TemplateView):
         approved_documents = Document.objects.filter(status='approved').select_related('tenant')
         context['approved_documents'] = approved_documents
         return context
+
+
+#to show all tanents
+class AllTenantsView(TemplateView):
+    template_name = 'users/all_tenants.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        all_tenants = Document.objects.select_related('tenant').all()
+        context['all_tenants'] = all_tenants
+        return context
