@@ -139,7 +139,7 @@ class ApprovedTenantsView(TemplateView):
         return context
 
 
-#to show all tanents
+# to show all tanents
 class AllTenantsView(TemplateView):
     template_name = 'users/all_tenants.html'
 
