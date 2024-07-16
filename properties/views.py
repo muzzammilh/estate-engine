@@ -9,6 +9,7 @@ from django.views import View
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 
+from contracts.models import TenancyContract
 from gallery.forms import DocFormSet, ImageFormSet
 from gallery.models import Image
 
@@ -348,7 +349,6 @@ class UnitAppliedTenantsView(ListView):
 class UpdateDocumentStatusView(View):
     def post(self, request, document_id, *args, **kwargs):
         status = request.POST.get('status')
-
         document = get_object_or_404(Document, id=document_id)
 
         if status == 'approved':
@@ -357,21 +357,30 @@ class UpdateDocumentStatusView(View):
                 message = "Another tenant has already been approved for this unit."
                 return JsonResponse({'message': message, 'status': 'error', 'new_status': document.status})
 
+            else:
+                if TenancyContract.objects.filter(unit=document.unit, tenant=document.tenant).exists():
+                    message = "You have already been approved for this unit."
+                    return JsonResponse({'message': message, 'status': 'error', 'new_status': document.status})
+
+                TenancyContract.objects.create(
+                    unit=document.unit,
+                    tenant=document.tenant,
+                    owner=document.unit.property.owner,
+                )
+                document.unit.is_available_for_rent = False
+                document.unit.resident = document.tenant
+                document.unit.save()
+
         document.status = status
         document.save()
 
-        unit = document.unit
-        if status == 'approved':
-            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
-                unit.is_available_for_rent = False
-            else:
-                unit.is_available_for_rent = False
-        elif status == 'rejected' or status == 'pending':
-            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
-                unit.is_available_for_rent = False
-            else:
-                unit.is_available_for_rent = True
-        unit.save()
+        if status == 'rejected' or status == 'pending':
+            unit = document.unit
+            unit.is_available_for_rent = True
+            unit.resident = None
+            unit.save()
+
+            TenancyContract.objects.filter(unit=unit, tenant=document.tenant).delete()
 
         message = f"Document status updated to '{status}'."
         return JsonResponse({'message': message, 'status': 'success', 'new_status': status})

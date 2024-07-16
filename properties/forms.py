@@ -1,5 +1,3 @@
-# properties/forms.py
-
 from django import forms
 
 from .models import City, Country, Property, State, SubLocality, Unit

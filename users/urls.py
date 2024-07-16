@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from .views import (CustomPasswordResetCompleteView,
+from .views import (ApprovedTenantsView, CustomPasswordResetCompleteView,
                     CustomPasswordResetConfirmView, CustomPasswordResetView,
                     OwnerDashboardView, PasswordChangeView, ProfileUpdateView,
                     TenantDashboardView, UserLoginView, UserLogoutView,
@@ -17,6 +17,7 @@ urlpatterns = [
     path('reset/done/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('owner-dashboard/', OwnerDashboardView.as_view(), name='owner_dashboard'),
     path('tenant-dashboard/', TenantDashboardView.as_view(), name='tenant_dashboard'),
+    path('approved-tenants/', ApprovedTenantsView.as_view(), name='approved_tenants'),
     path('profile-update/', ProfileUpdateView.as_view(), name='profile_update'),
     path('password-update/', PasswordChangeView.as_view(), name='password_change'),
 ]

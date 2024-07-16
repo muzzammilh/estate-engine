@@ -11,6 +11,8 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, FormView, TemplateView, UpdateView
 
+from properties.models import Document
+
 from .forms import (CustomPasswordResetForm, CustomSetPasswordForm,
                     ProfilePasswordChangeForm, UserLoginForm, UserProfileForm,
                     UserRegistrationForm)
@@ -124,3 +126,14 @@ class PasswordChangeView(LoginRequiredMixin, FormView):
         update_session_auth_hash(self.request, user)
         messages.success(self.request, 'Your password has been changed successfully.')
         return super().form_valid(form)
+
+
+# just to show all approved tenants
+class ApprovedTenantsView(TemplateView):
+    template_name = 'users/approved_tenants.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        approved_documents = Document.objects.filter(status='approved').select_related('tenant')
+        context['approved_documents'] = approved_documents
+        return context

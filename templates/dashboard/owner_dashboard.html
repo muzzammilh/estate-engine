@@ -3,5 +3,17 @@
     Owner Dashboard
 {% endblock title %}
 {% block content %}
-    <a href="{% url 'property_list' %}">List Properties</a>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Manage Properties</h5>
+                        <p class="card-text">Click below to list all properties.</p>
+                        <a href="{% url 'property_list' %}" class="btn btn-primary">List Properties</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

@@ -82,6 +82,7 @@ class Unit(BasedModel):
     images = GenericRelation('gallery.Image')
     is_available_for_rent = models.BooleanField(default=False)
     rent_per_month = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    resident = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Unit {self.unit_number} in {self.property.name}"

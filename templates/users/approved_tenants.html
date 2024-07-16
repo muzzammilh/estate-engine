@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}
+    Approved Tenants
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Approved Tenants</h2>
+            </div>
+            <div class="card-body">
+                {% if approved_documents %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                    <th>Contract</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for document in approved_documents %}
+                                    <tr>
+                                        <form>
+                                            {% csrf_token %}
+                                            <td>{{ document.tenant.email }}</td>
+                                            <td>
+                                                <a href="{% url 'unit_detail' document.unit.id %}"
+                                                   class="text-decoration-none">{{ document.unit }}</a>
+                                                <input type='hidden' name="unit_id" value="{{ document.unit.id }}">
+                                            </td>
+                                            <td>{{ document.status }}</td>
+                                            <td>
+                                                <button type="submit"
+                                                        formaction="{% url 'create_contract' document.tenant.id %}"
+                                                        class="btn btn-outline-primary btn-sm">Make Contract</button>
+                                            </td>
+                                        </form>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No approved tenants found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
