@@ -22,7 +22,9 @@
                         <tbody>
                             {% for contract in contracts %}
                                 <tr>
-                                    <td>{{ contract.tenant.email }}</td>
+                                    <td>
+                                        <a href="{% url 'contract_detail' contract.id %}">{{ contract.tenant.email }}</a>
+                                    </td>
                                     <td>{{ contract.unit }}</td>
                                     <td>{{ contract.start_date }}</td>
                                     <td>{{ contract.end_date }}</td>

@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import DeleteView, ListView, UpdateView
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 
 from properties.models import Document, Unit
 from users.models import User
@@ -112,3 +112,17 @@ class TenantContractsView(ListView):
 
     def get_queryset(self):
         return TenancyContract.objects.filter(tenant=self.request.user)
+
+
+# for detail of contract
+class ContractDetailView(DetailView):
+    model = TenancyContract
+    template_name = 'contracts/contract_detail.html'
+    context_object_name = 'contract'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        contract = self.object
+        context['unit'] = contract.unit
+        context['property'] = contract.unit.property
+        return context
