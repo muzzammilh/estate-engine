@@ -84,13 +84,7 @@
                                     class="sidebar-dropdown list-unstyled collapse"
                                     data-bs-parent="#sidebar">
                                     <li class="sidebar-item">
-                                        <a href="" class="sidebar-link">Owned Properties</a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="" class="sidebar-link">Leased Properties</a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">All Properties</a>
+                                        <a href="{% url 'property_list' %}" class="sidebar-link">All Properties</a>
                                     </li>
                                 </ul>
                             </li>
@@ -147,7 +141,7 @@
                                    aria-expanded="false"
                                    aria-controls="contract-dropdown">
                                     <i class="lni lni-book"></i>
-                                    <span>Contract</span>
+                                    <span>Contracts</span>
                                 </a>
                                 <ul id="contract-dropdown"
                                     class="sidebar-dropdown list-unstyled collapse"
