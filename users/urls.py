@@ -5,8 +5,8 @@ from .views import (AllTenantsView, ApprovedTenantsView,
                     CustomPasswordResetCompleteView,
                     CustomPasswordResetConfirmView, CustomPasswordResetView,
                     OwnerDashboardView, PasswordChangeView, ProfileUpdateView,
-                    TenantDashboardView, UserLoginView, UserLogoutView,
-                    UserRegisterView)
+                    ProfileView, TenantDashboardView, UserLoginView,
+                    UserLogoutView, UserRegisterView)
 
 urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),
@@ -22,4 +22,5 @@ urlpatterns = [
     path('approved-tenants/', ApprovedTenantsView.as_view(), name='approved_tenants'),
     path('profile-update/', ProfileUpdateView.as_view(), name='profile_update'),
     path('password-update/', PasswordChangeView.as_view(), name='password_change'),
+    path('profile/', ProfileView.as_view(), name='user_profile'),
 ]

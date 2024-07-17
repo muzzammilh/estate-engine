@@ -11,7 +11,8 @@ from django.contrib.auth.views import (LoginView, LogoutView,
 from django.db import models
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, FormView, TemplateView, UpdateView
+from django.views.generic import (CreateView, DetailView, FormView,
+                                  TemplateView, UpdateView)
 
 from contracts.models import TenancyContract
 from properties.models import Document, Property, Unit
@@ -181,3 +182,12 @@ class AllTenantsView(TemplateView):
         all_tenants = Document.objects.select_related('tenant').all()
         context['all_tenants'] = all_tenants
         return context
+
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'users/profile.html'
+    context_object_name = 'user'
+
+    def get_object(self, queryset=None):
+        return self.request.user

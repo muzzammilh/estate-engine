@@ -57,13 +57,13 @@
             <div class="wrapper d-flex">
                 <aside id="sidebar" class="expand">
                     <ul class="sidebar-nav">
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="lni lni-user"></i>
-                                <span>Profile</span>
-                            </a>
-                        </li>
                         {% if user.role == user.OWNER %}
+                            <li class="sidebar-item">
+                                <a href="{% url 'user_profile' %}" class="sidebar-link">
+                                    <i class="lni lni-user"></i>
+                                    <span>Profile</span>
+                                </a>
+                            </li>
                             <li class="sidebar-item">
                                 <a href="{% url 'owner_dashboard' %}" class="sidebar-link">
                                     <i class="lni lni-home"></i>
@@ -160,6 +160,12 @@
                         {% endif %}
                         {% if user.role == user.TENANT %}
                             <li class="sidebar-item">
+                                <a href="{% url 'user_profile' %}" class="sidebar-link">
+                                    <i class="lni lni-user"></i>
+                                    <span>Profile</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
                                 <a href="{% url 'tenant_dashboard' %}" class="sidebar-link">
                                     <i class="lni lni-home"></i>
                                     <span>Home</span>
@@ -181,10 +187,6 @@
                                     <li class="sidebar-item">
                                         <a href="{% url 'available_units' %}" class="sidebar-link">Available Units</a>
                                     </li>
-                                </ul>
-                                <ul id="units-dropdown"
-                                    class="sidebar-dropdown list-unstyled collapse"
-                                    data-bs-parent="#sidebar">
                                     <li class="sidebar-item">
                                         <a href="{% url 'user_applied_units' %}" class="sidebar-link">Applied Units</a>
                                     </li>
@@ -207,10 +209,6 @@
                                         <a href="{% url 'tenant_active_contracts' user.id %}"
                                            class="sidebar-link">Active Contracts</a>
                                     </li>
-                                </ul>
-                                <ul id="contract-dropdown"
-                                    class="sidebar-dropdown list-unstyled collapse"
-                                    data-bs-parent="#sidebar">
                                     <li class="sidebar-item">
                                         <a href="{% url 'your_contracts' %}" class="sidebar-link">All Contracts</a>
                                     </li>
