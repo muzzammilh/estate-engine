@@ -5,8 +5,10 @@
 {% endblock title %}
 {% block content %}
     <div class="container mt-4">
-        <h2 class="mb-4">Units You Applied For</h2>
         <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Units You Applied For</h2>
+            </div>
             <div class="card-body">
                 {% if applied_units %}
                     <div class="table-responsive">
