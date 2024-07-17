@@ -37,7 +37,8 @@
                                 <td>{{ unit.is_available_for_rent }}</td>
                                 <td>{{ unit.property.name }}</td>
                                 <td>
-                                    <a href="{% url 'unit_applied_tenants' unit.pk %}" class="btn btn-success btn-sm">Applicants</a>
+                                    <a href="{% url 'unit_applied_tenants' unit.pk %}"
+                                       class="btn btn-success btn-sm">Applicants</a>
                                     <a href="{% url 'unit_detail' unit.pk %}" class="btn btn-info btn-sm">View</a>
                                     <a href="{% url 'unit_update' unit.pk %}" class="btn btn-warning btn-sm">Edit</a>
                                     <a href="{% url 'unit_delete' unit.pk %}" class="btn btn-danger btn-sm">Delete</a>

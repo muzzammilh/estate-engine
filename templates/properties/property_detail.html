@@ -7,7 +7,9 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card border-primary mb-3">
-                    <div class="card-header"><h4>{{ property.name }} Details</h4></div>
+                    <div class="card-header">
+                        <h4>{{ property.name }} Details</h4>
+                    </div>
                     <div class="card-body">
                         <table class="table table-bordered">
                             <tbody>
@@ -81,7 +83,9 @@
             <div class="col-md-12">
                 <div class="card border-primary mb-3">
                     <div class="card-header">
-                        <h4>{{ property.name }}'s Units  <a href="{% url 'unit_create' property.pk %}" class="btn btn-primary">Add Unit</a></h4>
+                        <h4>
+                            {{ property.name }}'s Units  <a href="{% url 'unit_create' property.pk %}" class="btn btn-primary">Add Unit</a>
+                        </h4>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -114,8 +118,6 @@
                                         <td>
                                             <a href="{% url 'unit_applied_tenants' unit.pk %}"
                                                class="btn btn-success btn-sm">Applicants</a>
-                                        
-                                        <td>
                                             <a href="{% url 'unit_detail' unit.pk %}" class="btn btn-info btn-sm">View</a>
                                             <a href="{% url 'unit_update' unit.pk %}" class="btn btn-warning btn-sm">Edit</a>
                                             <a href="{% url 'unit_delete' unit.pk %}" class="btn btn-danger btn-sm">Delete</a>
