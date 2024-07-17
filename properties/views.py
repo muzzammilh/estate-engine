@@ -373,11 +373,13 @@ class UpdateDocumentStatusView(View):
 
         document.status = status
         document.save()
-
+        unit = document.unit
         if status == 'rejected' or status == 'pending':
-            unit = document.unit
-            unit.is_available_for_rent = True
-            unit.resident = None
+            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
+                unit.is_available_for_rent = False
+            else:
+                unit.is_available_for_rent = True
+                unit.resident = None
             unit.save()
 
             TenancyContract.objects.filter(unit=unit, tenant=document.tenant).delete()
