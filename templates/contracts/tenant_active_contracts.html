@@ -13,6 +13,7 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th>Owner</th>
                                 <th>Unit</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
@@ -23,6 +24,7 @@
                         <tbody>
                             {% for contract in contracts %}
                                 <tr>
+                                    <td>{{ contract.owner.email }}</td>
                                     <td>{{ contract.unit }}</td>
                                     <td>{{ contract.start_date }}</td>
                                     <td>{{ contract.end_date }}</td>
