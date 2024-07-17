@@ -168,7 +168,8 @@ class ApprovedTenantsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        approved_documents = Document.objects.filter(status='approved').select_related('tenant')
+        owner = self.request.user
+        approved_documents = Document.objects.filter(status='approved', unit__property__owner=owner).select_related('tenant')
         context['approved_documents'] = approved_documents
         return context
 
@@ -179,11 +180,13 @@ class AllTenantsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        all_tenants = Document.objects.select_related('tenant').all()
+        owner = self.request.user
+        all_tenants = Document.objects.filter(unit__property__owner=owner).select_related('tenant')
         context['all_tenants'] = all_tenants
         return context
 
 
+# to show profile
 class ProfileView(LoginRequiredMixin, DetailView):
     model = User
     template_name = 'users/profile.html'

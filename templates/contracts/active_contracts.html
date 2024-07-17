@@ -8,37 +8,41 @@
             <div class="card-body">
                 <h2 class="mb-4">Active Contracts</h2>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Tenant</th>
-                                <th>Unit</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Rent Agreed</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for contract in contracts %}
+                    {% if contracts %}
+                        <table class="table table-striped table-hover">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <td>{{ contract.tenant.email }}</td>
-                                    <td>{{ contract.unit }}</td>
-                                    <td>{{ contract.start_date }}</td>
-                                    <td>{{ contract.end_date }}</td>
-                                    <td>{{ contract.rent_agreed }}</td>
-                                    <td>
-                                        <a href="{% url 'contract_detail' contract.id %}"
-                                           class="btn btn-info btn-sm">View</a>
-                                        <a href="{% url 'update_contract' contract.id %}"
-                                           class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="{% url 'delete_contract' contract.id %}"
-                                           class="btn btn-danger btn-sm">Delete</a>
-                                    </td>
+                                    <th>Tenant</th>
+                                    <th>Unit</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Rent Agreed</th>
+                                    <th>Actions</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for contract in contracts %}
+                                    <tr>
+                                        <td>{{ contract.tenant.email }}</td>
+                                        <td>{{ contract.unit }}</td>
+                                        <td>{{ contract.start_date }}</td>
+                                        <td>{{ contract.end_date }}</td>
+                                        <td>{{ contract.rent_agreed }}</td>
+                                        <td>
+                                            <a href="{% url 'contract_detail' contract.id %}"
+                                               class="btn btn-info btn-sm">View</a>
+                                            <a href="{% url 'update_contract' contract.id %}"
+                                               class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'delete_contract' contract.id %}"
+                                               class="btn btn-danger btn-sm">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>No active contracts found.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>

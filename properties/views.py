@@ -403,7 +403,7 @@ class OwnerAvailableUnitsView(ListView):
     context_object_name = 'units'
 
     def get_queryset(self):
-        return Unit.objects.filter(is_available_for_rent=True)
+        return Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=True)
 
 
 # to display all unit that are rented out
@@ -413,4 +413,4 @@ class OwnerRentedOutUnitsView(ListView):
     context_object_name = 'units'
 
     def get_queryset(self):
-        return Unit.objects.filter(is_available_for_rent=False)
+        return Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=False)

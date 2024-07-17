@@ -64,7 +64,7 @@ class ActiveContractsView(ListView):
     context_object_name = 'contracts'
 
     def get_queryset(self):
-        return TenancyContract.objects.filter(active=True)
+        return TenancyContract.objects.filter(owner=self.request.user, active=True)
 
 
 # for all contracts
@@ -73,7 +73,7 @@ class AllContractsView(ListView):
     context_object_name = 'contracts'
 
     def get_queryset(self):
-        return TenancyContract.objects.all()
+        return TenancyContract.objects.filter(owner=self.request.user)
 
 
 # update contract
