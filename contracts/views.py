@@ -105,7 +105,23 @@ class ContractDeleteView(DeleteView):
         return redirect(success_url)
 
 
-# to show contracts for use
+# to show active contracts of the tenant
+class TenantActiveContractsView(ListView):
+    model = TenancyContract
+    template_name = 'contracts/tenant_active_contracts.html'
+    context_object_name = 'contracts'
+
+    def get_queryset(self):
+        tenant = get_object_or_404(User, pk=self.kwargs['tenant_id'])
+        return TenancyContract.objects.filter(tenant=tenant, active=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tenant'] = get_object_or_404(User, pk=self.kwargs['tenant_id'])
+        return context
+
+
+# to show contracts for user
 class TenantContractsView(ListView):
     template_name = 'contracts/user_contracts_list.html'
     context_object_name = 'contracts'

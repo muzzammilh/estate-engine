@@ -4,15 +4,40 @@
 {% endblock title %}
 {% block content %}
     <div class="container mt-4">
-        <h2>Welcome to Your Tenant Dashboard</h2>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Welcome, {{ user.email }}</h5>
+                        <p class="card-text">This is your tenant dashboard</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row mt-4">
             <div class="col-md-6 mb-3">
-                <a href="{% url 'available_units' %}"
-                   class="btn btn-primary btn-lg btn-block">View Available Units</a>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Units Rented by You</h5>
+                        {% if rented_unit_count %}
+                            <p class="card-text">{{ rented_unit_count }}</p>
+                        {% else %}
+                            <p class="card-text">No units rented by you</p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6">
-                <a href="{% url 'user_applied_units' %}"
-                   class="btn btn-info btn-lg btn-block">View Applied Units</a>
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Rent Agreed</h5>
+                        {% if total_rent_agreed %}
+                            <p class="card-text">{{ total_rent_agreed }}</p>
+                        {% else %}
+                            <p class="card-text">0</p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -5,25 +5,44 @@
 {% endblock title %}
 {% block content %}
     <div class="container mt-4">
-        <h2>Units You Applied For</h2>
-        <div class="card">
-            <ul class="list-group list-group-flush">
-                {% for unit_info in applied_units %}
-                    <li class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="mb-0">
-                                    <a href="{% url 'unit_detail' unit_info.unit.id %}"
-                                       class="text-decoration-none">Unit {{ unit_info.unit.unit_number }}</a>
-                                </h5>
-                                <small>Status: <span class="badge bg-info">{{ unit_info.status }}</span></small>
-                            </div>
-                        </div>
-                    </li>
-                {% empty %}
-                    <li class="list-group-item">You haven't applied for any units yet.</li>
-                {% endfor %}
-            </ul>
+        <h2 class="mb-4">Units You Applied For</h2>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {% if applied_units %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Owner</th>
+                                    <th>Property</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for unit_info in applied_units %}
+                                    <tr>
+                                        <td>{{ unit_info.unit.property.owner.email }}</td>
+                                        <td>{{ unit_info.unit.property }}</td>
+                                        <td>Unit {{ unit_info.unit.unit_number }}</td>
+                                        <td>
+                                            {% if unit_info.status == 'approved' %}
+                                                <span class="badge bg-success">{{ unit_info.status }}</span>
+                                            {% elif unit_info.status == 'rejected' %}
+                                                <span class="badge bg-danger">{{ unit_info.status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">{{ unit_info.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">You haven't applied for any units yet.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 {% endblock content %}

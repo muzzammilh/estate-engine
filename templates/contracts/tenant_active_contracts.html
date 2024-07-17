@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}
+    Active Contracts for {{ tenant.email }}
+{% endblock title %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="mb-4">Active Contracts for {{ tenant.email }}</h2>
+            {% if contracts %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Unit</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Rent Agreed</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for contract in contracts %}
+                            <tr>
+                                <td>{{ contract.unit }}</td>
+                                <td>{{ contract.start_date }}</td>
+                                <td>{{ contract.end_date }}</td>
+                                <td>{{ contract.rent_agreed }}</td>
+                                <td>
+                                        <a href="{% url 'contract_detail' contract.id %}"
+                                           class="btn btn-info btn-sm">View</a>
+                                    </td>
+                                </tr>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No active contracts found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
