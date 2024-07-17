@@ -1,7 +1,9 @@
 from django.urls import path
 
-from .views import (AvailableUnitsView, PropertyCreateView, PropertyDeleteView,
-                    PropertyDetailView, PropertyListView, PropertyUpdateView,
+from .views import (AvailableUnitsView, OwnerAllUnitsListView,
+                    OwnerAvailableUnitsView, OwnerRentedOutUnitsView,
+                    PropertyCreateView, PropertyDeleteView, PropertyDetailView,
+                    PropertyListView, PropertyUpdateView,
                     UnitAppliedTenantsView, UnitCreateView, UnitDeleteView,
                     UnitDetailView, UnitUpdateView, UpdateDocumentStatusView,
                     UploadDocumentsView, UserAppliedUnitsView, load_cities,
@@ -19,6 +21,9 @@ urlpatterns = [
     path('unit/<int:pk>/', UnitDetailView.as_view(), name='unit_detail'),
     path('available-units/', AvailableUnitsView.as_view(), name='available_units'),
     path('user-applied-units/', UserAppliedUnitsView.as_view(), name='user_applied_units'),
+    path('owner-all-units/', OwnerAllUnitsListView.as_view(), name='owner_all_units'),
+    path('owner-available-units/', OwnerAvailableUnitsView.as_view(), name='owner_available_units'),
+    path('owner-rentedout-units/', OwnerRentedOutUnitsView.as_view(), name='owner_rentedout_units'),
     path('unit/<int:unit_id>/applied-tenants/', UnitAppliedTenantsView.as_view(), name='unit_applied_tenants'),
     path('upload-documents/<int:unit_id>', UploadDocumentsView.as_view(), name='upload_documents'),
     path('update-document-status/<int:document_id>/', UpdateDocumentStatusView.as_view(), name='update_document_status'),

@@ -384,3 +384,33 @@ class UpdateDocumentStatusView(View):
 
         message = f"Document status updated to '{status}'."
         return JsonResponse({'message': message, 'status': 'success', 'new_status': status})
+
+
+# to dislay all units of owner
+class OwnerAllUnitsListView(ListView):
+    model = Unit
+    template_name = 'properties/owner_all_units.html'
+    context_object_name = 'units'
+
+    def get_queryset(self):
+        return Unit.objects.filter(property__owner=self.request.user)
+
+
+# to display all unit that are not rented out
+class OwnerAvailableUnitsView(ListView):
+    model = Unit
+    template_name = 'properties/owner_available_units.html'
+    context_object_name = 'units'
+
+    def get_queryset(self):
+        return Unit.objects.filter(is_available_for_rent=True)
+
+
+# to display all unit that are rented out
+class OwnerRentedOutUnitsView(ListView):
+    model = Unit
+    template_name = 'properties/owner_rentedout_units.html'
+    context_object_name = 'units'
+
+    def get_queryset(self):
+        return Unit.objects.filter(is_available_for_rent=False)

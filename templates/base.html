@@ -108,10 +108,13 @@
                                     class="sidebar-dropdown list-unstyled collapse"
                                     data-bs-parent="#sidebar">
                                     <li class="sidebar-item">
-                                        <a href="" class="sidebar-link">Available Units</a>
+                                        <a href="{% url 'owner_available_units' %}" class="sidebar-link">Available Units</a>
                                     </li>
                                     <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">All Units</a>
+                                        <a href="{% url 'owner_rentedout_units' %}" class="sidebar-link">Rented Out Units</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'owner_all_units' %}" class="sidebar-link">All Units</a>
                                     </li>
                                 </ul>
                             </li>
