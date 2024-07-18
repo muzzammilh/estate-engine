@@ -275,13 +275,26 @@ class UploadDocumentsView(View):
 
 # view for the units user applied
 class UserAppliedUnitsView(TemplateView):
-    template_name = 'properties/user_applied_units.html'
+    template_name = 'properties/tenant_applied_units.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
+        filter_form = OwnerUnitFilterForm(self.request.GET)
+        context['filter_form'] = filter_form
+
         documents = Document.objects.filter(tenant=user)
+
+        if filter_form.is_valid():
+            property_id = filter_form.cleaned_data.get('property')
+            unit_id = filter_form.cleaned_data.get('unit')
+
+            if property_id:
+                documents = documents.filter(unit__property_id=property_id)
+
+            if unit_id:
+                documents = documents.filter(unit_id=unit_id)
 
         applied_units = [
             {

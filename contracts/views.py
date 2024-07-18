@@ -144,11 +144,26 @@ class TenantActiveContractsView(ListView):
 
     def get_queryset(self):
         tenant = get_object_or_404(User, pk=self.kwargs['tenant_id'])
-        return TenancyContract.objects.filter(tenant=tenant, active=True)
+        filter_form = OwnerUnitFilterForm(self.request.GET)
+
+        queryset = TenancyContract.objects.filter(tenant=tenant, active=True)
+
+        if filter_form.is_valid():
+            property_id = filter_form.cleaned_data.get('property')
+            unit_id = filter_form.cleaned_data.get('unit')
+
+            if property_id:
+                queryset = queryset.filter(unit__property_id=property_id)
+
+            if unit_id:
+                queryset = queryset.filter(unit_id=unit_id)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tenant'] = get_object_or_404(User, pk=self.kwargs['tenant_id'])
+        context['filter_form'] = OwnerUnitFilterForm(self.request.GET)
         return context
 
 
@@ -158,7 +173,25 @@ class TenantContractsView(ListView):
     context_object_name = 'contracts'
 
     def get_queryset(self):
-        return TenancyContract.objects.filter(tenant=self.request.user)
+        queryset = TenancyContract.objects.filter(tenant=self.request.user)
+        filter_form = OwnerUnitFilterForm(self.request.GET)
+
+        if filter_form.is_valid():
+            property_id = filter_form.cleaned_data.get('property')
+            unit_id = filter_form.cleaned_data.get('unit')
+
+            if property_id:
+                queryset = queryset.filter(unit__property_id=property_id)
+
+            if unit_id:
+                queryset = queryset.filter(unit_id=unit_id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = OwnerUnitFilterForm(self.request.GET)
+        return context
 
 
 # for detail of contract
