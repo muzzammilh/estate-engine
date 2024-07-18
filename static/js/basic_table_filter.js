@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log(item)
           field.innerHTML += `<option value="${item.id}">${item.unit_number}</option>`;
         });
-        
+
       });
   }
 
