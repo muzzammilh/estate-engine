@@ -15,6 +15,7 @@ from django.views.generic import (CreateView, DetailView, FormView,
                                   TemplateView, UpdateView)
 
 from contracts.models import TenancyContract
+from properties.forms import OwnerUnitFilterForm
 from properties.models import Document, Property, Unit
 
 from .forms import (CustomPasswordResetForm, CustomSetPasswordForm,
@@ -169,8 +170,18 @@ class ApprovedTenantsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         owner = self.request.user
+
+        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=owner)
         approved_documents = Document.objects.filter(status='approved', unit__property__owner=owner).select_related('tenant')
+
+        if self.filter_form.is_valid():
+            if self.filter_form.cleaned_data.get('property'):
+                approved_documents = approved_documents.filter(unit__property=self.filter_form.cleaned_data['property'])
+            if self.filter_form.cleaned_data.get('unit'):
+                approved_documents = approved_documents.filter(unit=self.filter_form.cleaned_data['unit'])
+
         context['approved_documents'] = approved_documents
+        context['filter_form'] = self.filter_form
         return context
 
 
@@ -181,8 +192,18 @@ class AllTenantsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         owner = self.request.user
+
+        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=owner)
         all_tenants = Document.objects.filter(unit__property__owner=owner).select_related('tenant')
+
+        if self.filter_form.is_valid():
+            if self.filter_form.cleaned_data.get('property'):
+                all_tenants = all_tenants.filter(unit__property=self.filter_form.cleaned_data['property'])
+            if self.filter_form.cleaned_data.get('unit'):
+                all_tenants = all_tenants.filter(unit=self.filter_form.cleaned_data['unit'])
+
         context['all_tenants'] = all_tenants
+        context['filter_form'] = self.filter_form
         return context
 
 

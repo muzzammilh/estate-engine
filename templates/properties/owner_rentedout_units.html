@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}
     Rented Out Units
 {% endblock title %}
@@ -9,12 +10,31 @@
                 <h2 class="mb-0">Rented Out Units</h2>
             </div>
             <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.property.label_tag }}
+                                {{ filter_form.property }}
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.unit.label_tag }}
+                                {{ filter_form.unit }}
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                        </div>
+                    </div>
+                </form>
                 <div class="table-responsive">
                     {% if units %}
                         <table class="table table-striped table-bordered">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th>#</th>
+                                    <th>Property</th>
                                     <th>Unit Number</th>
                                     <th>Description</th>
                                     <th>Beds</th>
@@ -23,14 +43,13 @@
                                     <th>Living Rooms</th>
                                     <th>Stores</th>
                                     <th>Rentable</th>
-                                    <th>Property</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for unit in units %}
                                     <tr>
-                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ unit.property.name }}</td>
                                         <td>{{ unit.unit_number }}</td>
                                         <td>{{ unit.description }}</td>
                                         <td>{{ unit.num_beds }}</td>
@@ -39,7 +58,6 @@
                                         <td>{{ unit.num_living_rooms }}</td>
                                         <td>{{ unit.num_stores }}</td>
                                         <td>{{ unit.is_available_for_rent }}</td>
-                                        <td>{{ unit.property.name }}</td>
                                         <td>
                                             <a href="{% url 'unit_applied_tenants' unit.pk %}"
                                                class="btn btn-success btn-sm">Applicants</a>
@@ -59,3 +77,6 @@
         </div>
     </div>
 {% endblock content %}
+{% block js %}
+    <script src="{% static 'js/basic_table_filter.js' %}"></script>
+{% endblock js %}

@@ -7,7 +7,7 @@ from .views import (AvailableUnitsView, OwnerAllUnitsListView,
                     UnitAppliedTenantsView, UnitCreateView, UnitDeleteView,
                     UnitDetailView, UnitUpdateView, UpdateDocumentStatusView,
                     UploadDocumentsView, UserAppliedUnitsView, load_cities,
-                    load_states, load_sub_localities)
+                    load_states, load_sub_localities, load_units)
 
 urlpatterns = [
     path('', PropertyListView.as_view(), name='property_list'),
@@ -30,4 +30,5 @@ urlpatterns = [
     path('ajax/load-states/', load_states, name='ajax_load_states'),
     path('ajax/load-cities/', load_cities, name='ajax_load_cities'),
     path('ajax/load-sub-localities/', load_sub_localities, name='ajax_load_sub_localities'),
+    path('ajax/load-units/', load_units, name='ajax_load_units'),
 ]

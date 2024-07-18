@@ -82,10 +82,9 @@
         <div class="row mt-4">
             <div class="col-md-12">
                 <div class="card border-primary mb-3">
-                    <div class="card-header bg-primary text-white">
-                        <h4>
-                            {{ property.name }}'s Units  <a href="{% url 'unit_create' property.pk %}" class="btn btn-primary">Add Unit</a>
-                        </h4>
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4>{{ property.name }}'s Units</h4>
+                        <a href="{% url 'unit_create' property.pk %}" class="btn btn-primary">Add Unit</a>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">

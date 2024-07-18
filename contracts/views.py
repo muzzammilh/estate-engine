@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 
+from properties.forms import OwnerUnitFilterForm
 from properties.models import Document, Unit
 from users.models import User
 
@@ -64,7 +65,22 @@ class ActiveContractsView(ListView):
     context_object_name = 'contracts'
 
     def get_queryset(self):
-        return TenancyContract.objects.filter(owner=self.request.user, active=True)
+        owner = self.request.user
+        queryset = TenancyContract.objects.filter(owner=owner, active=True)
+
+        property_id = self.request.GET.get('property')
+        unit_id = self.request.GET.get('unit')
+        if property_id:
+            queryset = queryset.filter(unit__property_id=property_id)
+        if unit_id:
+            queryset = queryset.filter(unit_id=unit_id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = OwnerUnitFilterForm(user=self.request.user, data=self.request.GET)
+        return context
 
 
 # for all contracts
@@ -73,7 +89,22 @@ class AllContractsView(ListView):
     context_object_name = 'contracts'
 
     def get_queryset(self):
-        return TenancyContract.objects.filter(owner=self.request.user)
+        owner = self.request.user
+        queryset = TenancyContract.objects.filter(owner=owner)
+
+        property_id = self.request.GET.get('property')
+        unit_id = self.request.GET.get('unit')
+        if property_id:
+            queryset = queryset.filter(unit__property_id=property_id)
+        if unit_id:
+            queryset = queryset.filter(unit_id=unit_id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = OwnerUnitFilterForm(user=self.request.user, data=self.request.GET)
+        return context
 
 
 # update contract
@@ -123,7 +154,7 @@ class TenantActiveContractsView(ListView):
 
 # to show contracts for user
 class TenantContractsView(ListView):
-    template_name = 'contracts/user_contracts_list.html'
+    template_name = 'contracts/tenant_contracts_list.html'
     context_object_name = 'contracts'
 
     def get_queryset(self):

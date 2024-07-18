@@ -13,7 +13,8 @@ from contracts.models import TenancyContract
 from gallery.forms import DocFormSet, ImageFormSet
 from gallery.models import Image
 
-from .forms import PropertyForm, TenantUnitFilterForm, UnitForm
+from .forms import (OwnerUnitFilterForm, PropertyForm, TenantUnitFilterForm,
+                    UnitForm)
 from .models import City, Document, Property, State, SubLocality, Unit
 
 
@@ -223,24 +224,6 @@ class AvailableUnitsView(ListView):
         return context
 
 
-def load_states(request):
-    country_id = request.GET.get('country_id')
-    states = State.objects.filter(country_id=country_id).order_by('name')
-    return JsonResponse(list(states.values('id', 'name')), safe=False)
-
-
-def load_cities(request):
-    state_id = request.GET.get('state_id')
-    cities = City.objects.filter(state_id=state_id).order_by('name')
-    return JsonResponse(list(cities.values('id', 'name')), safe=False)
-
-
-def load_sub_localities(request):
-    city_id = request.GET.get('city_id')
-    sub_localities = SubLocality.objects.filter(city_id=city_id).order_by('name')
-    return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
-
-
 # view for document uploads
 class UploadDocumentsView(View):
     DocFormSet = DocFormSet
@@ -395,7 +378,21 @@ class OwnerAllUnitsListView(ListView):
     context_object_name = 'units'
 
     def get_queryset(self):
-        return Unit.objects.filter(property__owner=self.request.user)
+        queryset = Unit.objects.filter(property__owner=self.request.user)
+        form = OwnerUnitFilterForm(self.request.GET)
+
+        if form.is_valid() and form.cleaned_data.get('property'):
+            queryset = queryset.filter(property=form.cleaned_data['property'])
+
+        if form.is_valid() and form.cleaned_data.get('unit'):
+            queryset = queryset.filter(id=form.cleaned_data['unit'].id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        return context
 
 
 # to display all unit that are not rented out
@@ -405,7 +402,21 @@ class OwnerAvailableUnitsView(ListView):
     context_object_name = 'units'
 
     def get_queryset(self):
-        return Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=True)
+        queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=True)
+        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('property'):
+            queryset = queryset.filter(property=self.filter_form.cleaned_data['property'])
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('unit'):
+            queryset = queryset.filter(id=self.filter_form.cleaned_data['unit'].id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        return context
 
 
 # to display all unit that are rented out
@@ -415,4 +426,42 @@ class OwnerRentedOutUnitsView(ListView):
     context_object_name = 'units'
 
     def get_queryset(self):
-        return Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=False)
+        queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=False)
+        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('property'):
+            queryset = queryset.filter(property=self.filter_form.cleaned_data['property'])
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('unit'):
+            queryset = queryset.filter(id=self.filter_form.cleaned_data['unit'].id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        return context
+
+
+def load_states(request):
+    country_id = request.GET.get('country_id')
+    states = State.objects.filter(country_id=country_id).order_by('name')
+    return JsonResponse(list(states.values('id', 'name')), safe=False)
+
+
+def load_cities(request):
+    state_id = request.GET.get('state_id')
+    cities = City.objects.filter(state_id=state_id).order_by('name')
+    return JsonResponse(list(cities.values('id', 'name')), safe=False)
+
+
+def load_sub_localities(request):
+    city_id = request.GET.get('city_id')
+    sub_localities = SubLocality.objects.filter(city_id=city_id).order_by('name')
+    return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
+
+
+def load_units(request):
+    property_id = request.GET.get('property_id')
+    units = Unit.objects.filter(property_id=property_id).order_by('id')
+    return JsonResponse(list(units.values('id', 'unit_number')), safe=False)
