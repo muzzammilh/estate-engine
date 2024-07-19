@@ -13,7 +13,7 @@ from contracts.models import TenancyContract
 from gallery.forms import DocFormSet, ImageFormSet
 from gallery.models import Image
 
-from .forms import (OwnerUnitFilterForm, PropertyForm, TenantUnitFilterForm,
+from .forms import (PropertyForm, TableUnitFilterForm, TenantUnitFilterForm,
                     UnitForm)
 from .models import City, Document, Property, State, SubLocality, Unit
 
@@ -281,7 +281,7 @@ class UserAppliedUnitsView(TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        filter_form = OwnerUnitFilterForm(self.request.GET)
+        filter_form = TableUnitFilterForm(self.request.GET)
         context['filter_form'] = filter_form
 
         documents = Document.objects.filter(tenant=user)
@@ -392,7 +392,7 @@ class OwnerAllUnitsListView(ListView):
 
     def get_queryset(self):
         queryset = Unit.objects.filter(property__owner=self.request.user)
-        form = OwnerUnitFilterForm(self.request.GET)
+        form = TableUnitFilterForm(self.request.GET)
 
         if form.is_valid() and form.cleaned_data.get('property'):
             queryset = queryset.filter(property=form.cleaned_data['property'])
@@ -404,7 +404,7 @@ class OwnerAllUnitsListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET, user=self.request.user)
         return context
 
 
@@ -416,7 +416,7 @@ class OwnerAvailableUnitsView(ListView):
 
     def get_queryset(self):
         queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=True)
-        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=self.request.user)
 
         if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('property'):
             queryset = queryset.filter(property=self.filter_form.cleaned_data['property'])
@@ -428,7 +428,7 @@ class OwnerAvailableUnitsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET, user=self.request.user)
         return context
 
 
@@ -440,7 +440,7 @@ class OwnerRentedOutUnitsView(ListView):
 
     def get_queryset(self):
         queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=False)
-        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=self.request.user)
 
         if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('property'):
             queryset = queryset.filter(property=self.filter_form.cleaned_data['property'])
@@ -452,7 +452,7 @@ class OwnerRentedOutUnitsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = OwnerUnitFilterForm(self.request.GET, user=self.request.user)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET, user=self.request.user)
         return context
 
 
@@ -476,5 +476,5 @@ def load_sub_localities(request):
 
 def load_units(request):
     property_id = request.GET.get('property_id')
-    units = Unit.objects.filter(property_id=property_id).order_by('id')
-    return JsonResponse(list(units.values('id', 'unit_number')), safe=False)
+    units = Unit.objects.filter(property_id=property_id).values('id', 'unit_number')
+    return JsonResponse(list(units), safe=False)

@@ -89,19 +89,21 @@ class TenantUnitFilterForm(forms.Form):
                 pass
 
 
-class OwnerUnitFilterForm(forms.Form):
+class TableUnitFilterForm(forms.Form):
     property = forms.ModelChoiceField(queryset=Property.objects.all(), required=False, empty_label="All Properties")
     unit = forms.ModelChoiceField(queryset=Unit.objects.none(), required=False, empty_label="All Units")
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
-        super(OwnerUnitFilterForm, self).__init__(*args, **kwargs)
+        super(TableUnitFilterForm, self).__init__(*args, **kwargs)
         if user:
             self.fields['property'].queryset = Property.objects.filter(owner=user)
 
         if 'property' in self.data:
             try:
                 property_id = int(self.data.get('property'))
-                self.fields['unit'].queryset = Unit.objects.filter(property_id=property_id)
+                units = Unit.objects.filter(property_id=property_id)
+                self.fields['unit'].queryset = units
+                self.fields['unit'].choices = [("", "All Units")] + [(unit.id, unit.unit_number) for unit in units]
             except (ValueError, TypeError):
                 pass

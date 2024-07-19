@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 
-from properties.forms import OwnerUnitFilterForm
+from properties.forms import TableUnitFilterForm
 from properties.models import Document, Unit
 from users.models import User
 
@@ -79,7 +79,7 @@ class ActiveContractsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = OwnerUnitFilterForm(user=self.request.user, data=self.request.GET)
+        context['filter_form'] = TableUnitFilterForm(user=self.request.user, data=self.request.GET)
         return context
 
 
@@ -103,7 +103,7 @@ class AllContractsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = OwnerUnitFilterForm(user=self.request.user, data=self.request.GET)
+        context['filter_form'] = TableUnitFilterForm(user=self.request.user, data=self.request.GET)
         return context
 
 
@@ -144,7 +144,7 @@ class TenantActiveContractsView(ListView):
 
     def get_queryset(self):
         tenant = get_object_or_404(User, pk=self.kwargs['tenant_id'])
-        filter_form = OwnerUnitFilterForm(self.request.GET)
+        filter_form = TableUnitFilterForm(self.request.GET)
 
         queryset = TenancyContract.objects.filter(tenant=tenant, active=True)
 
@@ -163,7 +163,7 @@ class TenantActiveContractsView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['tenant'] = get_object_or_404(User, pk=self.kwargs['tenant_id'])
-        context['filter_form'] = OwnerUnitFilterForm(self.request.GET)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET)
         return context
 
 
@@ -174,7 +174,7 @@ class TenantContractsView(ListView):
 
     def get_queryset(self):
         queryset = TenancyContract.objects.filter(tenant=self.request.user)
-        filter_form = OwnerUnitFilterForm(self.request.GET)
+        filter_form = TableUnitFilterForm(self.request.GET)
 
         if filter_form.is_valid():
             property_id = filter_form.cleaned_data.get('property')
@@ -190,7 +190,7 @@ class TenantContractsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = OwnerUnitFilterForm(self.request.GET)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET)
         return context
 
 

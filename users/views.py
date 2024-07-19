@@ -15,7 +15,7 @@ from django.views.generic import (CreateView, DetailView, FormView,
                                   TemplateView, UpdateView)
 
 from contracts.models import TenancyContract
-from properties.forms import OwnerUnitFilterForm
+from properties.forms import TableUnitFilterForm
 from properties.models import Document, Property, Unit
 
 from .forms import (CustomPasswordResetForm, CustomSetPasswordForm,
@@ -171,7 +171,7 @@ class ApprovedTenantsView(TemplateView):
         context = super().get_context_data(**kwargs)
         owner = self.request.user
 
-        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=owner)
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
         approved_documents = Document.objects.filter(status='approved', unit__property__owner=owner).select_related('tenant')
 
         if self.filter_form.is_valid():
@@ -193,7 +193,7 @@ class AllTenantsView(TemplateView):
         context = super().get_context_data(**kwargs)
         owner = self.request.user
 
-        self.filter_form = OwnerUnitFilterForm(self.request.GET, user=owner)
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
         all_tenants = Document.objects.filter(unit__property__owner=owner).select_related('tenant')
 
         if self.filter_form.is_valid():

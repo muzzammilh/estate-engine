@@ -3,14 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const unitField = document.getElementById("id_unit");
 
   function updateDropdown(url, field, placeholder) {
-    console.log(field)
-    console.log(placeholder)
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
+        console.log("Received data:", data);
         field.innerHTML = `<option value="">${placeholder}</option>`;
         data.forEach((item) => {
-          console.log(item)
+          console.log("Processing item:", item);
           field.innerHTML += `<option value="${item.id}">${item.unit_number}</option>`;
         });
 
