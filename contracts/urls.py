@@ -1,9 +1,10 @@
 from django.urls import path
 
-from .views import (ActiveContractsView, AllContractsView, ContractDeleteView,
-                    ContractDetailView, ContractUpdateView,
-                    TenancyContractCreateView, TenantActiveContractsView,
-                    TenantContractsView)
+from .contract_views import (ActiveContractsView, AllContractsView,
+                             ContractDeleteView, ContractUpdateView,
+                             TenancyContractCreateView)
+from .tenant_views import (ContractDetailView, TenantActiveContractsView,
+                           TenantContractsView)
 
 urlpatterns = [
     path('create-contract/<int:tenant_id>/', TenancyContractCreateView.as_view(), name='create_contract'),

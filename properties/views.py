@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  TemplateView, UpdateView)
+                                  UpdateView)
 
 from contracts.models import TenancyContract
 from gallery.forms import DocFormSet, ImageFormSet
@@ -274,15 +274,14 @@ class UploadDocumentsView(View):
 
 
 # view for the units user applied
-class UserAppliedUnitsView(TemplateView):
+class TenantAppliedUnitsView(ListView):
     template_name = 'properties/tenant_applied_units.html'
+    context_object_name = 'applied_units'
+    paginate_by = 20
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
         user = self.request.user
-
         filter_form = TableUnitFilterForm(self.request.GET)
-        context['filter_form'] = filter_form
 
         documents = Document.objects.filter(tenant=user)
 
@@ -304,7 +303,12 @@ class UserAppliedUnitsView(TemplateView):
             for document in documents
         ]
 
-        context['applied_units'] = applied_units
+        return applied_units
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filter_form = TableUnitFilterForm(self.request.GET)
+        context['filter_form'] = filter_form
         return context
 
 
@@ -389,6 +393,7 @@ class OwnerAllUnitsListView(ListView):
     model = Unit
     template_name = 'properties/owner_all_units.html'
     context_object_name = 'units'
+    paginate_by = 20
 
     def get_queryset(self):
         queryset = Unit.objects.filter(property__owner=self.request.user)
@@ -413,6 +418,7 @@ class OwnerAvailableUnitsView(ListView):
     model = Unit
     template_name = 'properties/owner_available_units.html'
     context_object_name = 'units'
+    paginate_by = 20
 
     def get_queryset(self):
         queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=True)
@@ -437,6 +443,7 @@ class OwnerRentedOutUnitsView(ListView):
     model = Unit
     template_name = 'properties/owner_rentedout_units.html'
     context_object_name = 'units'
+    paginate_by = 20
 
     def get_queryset(self):
         queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=False)

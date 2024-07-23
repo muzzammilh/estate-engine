@@ -17,3 +17,13 @@ class TenancyContractForm(forms.ModelForm):
             'start_date': DateInput(attrs={'class': 'form-control'}),
             'end_date': DateInput(attrs={'class': 'form-control'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get("start_date")
+        end_date = cleaned_data.get("end_date")
+
+        if end_date and start_date and end_date < start_date:
+            raise forms.ValidationError("End date should be greater than start date.")
+
+        return cleaned_data

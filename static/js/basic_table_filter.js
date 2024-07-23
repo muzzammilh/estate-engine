@@ -6,10 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        console.log("Received data:", data);
         field.innerHTML = `<option value="">${placeholder}</option>`;
         data.forEach((item) => {
-          console.log("Processing item:", item);
           field.innerHTML += `<option value="${item.id}">${item.unit_number}</option>`;
         });
 

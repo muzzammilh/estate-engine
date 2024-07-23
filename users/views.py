@@ -9,9 +9,10 @@ from django.contrib.auth.views import (LoginView, LogoutView,
                                        PasswordResetConfirmView,
                                        PasswordResetView)
 from django.db import models
+from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DetailView, FormView,
+from django.views.generic import (CreateView, DetailView, FormView, ListView,
                                   TemplateView, UpdateView)
 
 from contracts.models import TenancyContract
@@ -164,45 +165,68 @@ class PasswordChangeView(LoginRequiredMixin, FormView):
 
 
 # just to show all approved tenants
-class ApprovedTenantsView(TemplateView):
+class ApprovedTenantsView(ListView):
     template_name = 'users/approved_tenants.html'
+    context_object_name = 'approved_documents'
+    paginate_by = 20
+
+    def get_queryset(self):
+        owner = self.request.user
+        queryset = Document.objects.filter(
+            status='approved',
+            unit__property__owner=owner
+        ).select_related(
+            'tenant', 'unit', 'unit__property'
+        ).prefetch_related(
+            Prefetch('tenant', queryset=User.objects.only('id', 'first_name', 'last_name', 'email'))
+        )
+
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
+        if self.filter_form.is_valid():
+            property_filter = self.filter_form.cleaned_data.get('property')
+            unit_filter = self.filter_form.cleaned_data.get('unit')
+
+            if property_filter:
+                queryset = queryset.filter(unit__property=property_filter)
+            if unit_filter:
+                queryset = queryset.filter(unit=unit_filter)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        owner = self.request.user
-
-        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
-        approved_documents = Document.objects.filter(status='approved', unit__property__owner=owner).select_related('tenant')
-
-        if self.filter_form.is_valid():
-            if self.filter_form.cleaned_data.get('property'):
-                approved_documents = approved_documents.filter(unit__property=self.filter_form.cleaned_data['property'])
-            if self.filter_form.cleaned_data.get('unit'):
-                approved_documents = approved_documents.filter(unit=self.filter_form.cleaned_data['unit'])
-
-        context['approved_documents'] = approved_documents
         context['filter_form'] = self.filter_form
         return context
 
 
 # to show all tanents
-class AllTenantsView(TemplateView):
+class AllTenantsView(ListView):
     template_name = 'users/all_tenants.html'
+    context_object_name = 'all_tenants'
+    paginate_by = 20
+
+    def get_queryset(self):
+        owner = self.request.user
+        queryset = Document.objects.filter(unit__property__owner=owner).select_related(
+            'tenant', 'unit', 'unit__property'
+        ).prefetch_related(
+            Prefetch('tenant', queryset=User.objects.only('id', 'first_name', 'last_name', 'email'))
+        )
+
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
+        if self.filter_form.is_valid():
+            property_filter = self.filter_form.cleaned_data.get('property')
+            unit_filter = self.filter_form.cleaned_data.get('unit')
+
+            if property_filter:
+                queryset = queryset.filter(unit__property=property_filter)
+            if unit_filter:
+                queryset = queryset.filter(unit=unit_filter)
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        owner = self.request.user
-
-        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
-        all_tenants = Document.objects.filter(unit__property__owner=owner).select_related('tenant')
-
-        if self.filter_form.is_valid():
-            if self.filter_form.cleaned_data.get('property'):
-                all_tenants = all_tenants.filter(unit__property=self.filter_form.cleaned_data['property'])
-            if self.filter_form.cleaned_data.get('unit'):
-                all_tenants = all_tenants.filter(unit=self.filter_form.cleaned_data['unit'])
-
-        context['all_tenants'] = all_tenants
         context['filter_form'] = self.filter_form
         return context
 
