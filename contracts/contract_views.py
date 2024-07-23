@@ -1,14 +1,16 @@
 from django.contrib import messages
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, ListView, UpdateView
+
 from properties.forms import TableUnitFilterForm
 from properties.models import Document, Unit
 from users.models import User
+
 from .forms import TenancyContractForm
 from .models import TenancyContract
-from django.db import transaction
 from .views import get_filtered_queryset
 
 

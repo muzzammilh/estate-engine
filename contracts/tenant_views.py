@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404
-from django.views.generic import  ListView , DetailView
+from django.views.generic import DetailView, ListView
+
 from properties.forms import TableUnitFilterForm
 from users.models import User
-from .models import TenancyContract
 
+from .models import TenancyContract
 from .views import get_filtered_queryset
 
 
@@ -40,7 +41,7 @@ class TenantContractsView(ListView):
         context = super().get_context_data(**kwargs)
         context['filter_form'] = TableUnitFilterForm(self.request.GET)
         return context
-    
+
 
 # for detail of contract
 class ContractDetailView(DetailView):
