@@ -68,14 +68,12 @@ class TenancyContractCreateView(View):
 
             if existing_contract:
                 existing_contract.delete()
-                messages.warning(self.request, 'Existing contract replaced with a new one.')
+                messages.warning(self.request, 'Updated the contract.')
 
             contract = form.save(commit=False)
             contract.tenant = tenant
             contract.owner = owner
             contract.save()
-
-            messages.success(self.request, 'New contract created successfully.')
 
         return redirect(self.success_url)
 

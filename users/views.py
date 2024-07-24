@@ -16,6 +16,7 @@ from django.views.generic import (CreateView, DetailView, FormView, ListView,
                                   TemplateView, UpdateView)
 
 from contracts.models import TenancyContract
+from contracts.views import get_filtered_queryset
 from properties.forms import TableUnitFilterForm
 from properties.models import Document, Property, Unit
 
@@ -183,13 +184,7 @@ class ApprovedTenantsView(ListView):
 
         self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
         if self.filter_form.is_valid():
-            property_filter = self.filter_form.cleaned_data.get('property')
-            unit_filter = self.filter_form.cleaned_data.get('unit')
-
-            if property_filter:
-                queryset = queryset.filter(unit__property=property_filter)
-            if unit_filter:
-                queryset = queryset.filter(unit=unit_filter)
+            queryset = get_filtered_queryset(queryset, self.request)
 
         return queryset
 
@@ -215,13 +210,7 @@ class AllTenantsView(ListView):
 
         self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
         if self.filter_form.is_valid():
-            property_filter = self.filter_form.cleaned_data.get('property')
-            unit_filter = self.filter_form.cleaned_data.get('unit')
-
-            if property_filter:
-                queryset = queryset.filter(unit__property=property_filter)
-            if unit_filter:
-                queryset = queryset.filter(unit=unit_filter)
+            queryset = get_filtered_queryset(queryset, self.request)
 
         return queryset
 
