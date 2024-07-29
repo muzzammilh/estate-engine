@@ -59,6 +59,8 @@
                                                class="btn btn-warning btn-sm">Edit</a>
                                             <a href="{% url 'delete_contract' contract.id %}"
                                                class="btn btn-danger btn-sm">Delete</a>
+                                            <a href="{% url 'owner_chat' contract.tenant.id %}"
+                                               class="btn btn-success btn-sm">Message</a>
                                         </td>
                                     </tr>
                                 {% endfor %}
