@@ -4,11 +4,12 @@
 {% endblock title %}
 {% block content %}
     <div class="container mt-4">
-        <h2>{{ property.name }} Details</h2>
         <div class="row">
             <div class="col-md-12">
                 <div class="card border-primary mb-3">
-                    <div class="card-header">Property Details</div>
+                    <div class="card-header bg-primary text-white">
+                        <h4>{{ property.name }} Details</h4>
+                    </div>
                     <div class="card-body">
                         <table class="table table-bordered">
                             <tbody>
@@ -60,6 +61,12 @@
                                     </td>
                                     <td>{{ property.is_leased }}</td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Currency</strong>
+                                    </td>
+                                    <td>{{ property.currency }}</td>
+                                </tr>
                             </tbody>
                         </table>
                         <div>
@@ -74,55 +81,56 @@
         </div>
         <div class="row mt-4">
             <div class="col-md-12">
-                <h3>
-                    Units <a href="{% url 'unit_create' property.pk %}" class="btn btn-success">Add Unit</a>
-                </h3>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Unit Number</th>
-                            <th>Description</th>
-                            <th>Beds</th>
-                            <th>Bathrooms</th>
-                            <th>Kitchens</th>
-                            <th>Living Rooms</th>
-                            <th>Stores</th>
-                            <th>Is Available for Rent</th>
-                            <th>Applied By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for unit in property.units.all %}
-                            <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>
-                                    <a href="{% url 'unit_detail' unit.pk %}">{{ unit.unit_number }}</a>
-                                </td>
-                                <td>{{ unit.description }}</td>
-                                <td>{{ unit.num_beds }}</td>
-                                <td>{{ unit.num_bathrooms }}</td>
-                                <td>{{ unit.num_kitchens }}</td>
-                                <td>{{ unit.num_living_rooms }}</td>
-                                <td>{{ unit.num_stores }}</td>
-                                <td>{{ unit.is_available_for_rent }}</td>
-                                <td>
-                                    <a href="{% url 'unit_applied_tenants' unit.pk %}"
-                                       class="btn btn-info btn-sm">Applicants</a>
-                                </td>
-                                <td>
-                                    <a href="{% url 'unit_update' unit.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                                    <a href="{% url 'unit_delete' unit.pk %}" class="btn btn-danger btn-sm">Delete</a>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="11">No units found.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h4>{{ property.name }}'s Units</h4>
+                        <a href="{% url 'unit_create' property.pk %}" class="btn btn-primary">Add Unit</a>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Unit Number</th>
+                                    <th>Description</th>
+                                    <th>Beds</th>
+                                    <th>Bathrooms</th>
+                                    <th>Kitchens</th>
+                                    <th>Living Rooms</th>
+                                    <th>Stores</th>
+                                    <th>Rentable</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for unit in property.units.all %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ unit.unit_number }}</td>
+                                        <td>{{ unit.description }}</td>
+                                        <td>{{ unit.num_beds }}</td>
+                                        <td>{{ unit.num_bathrooms }}</td>
+                                        <td>{{ unit.num_kitchens }}</td>
+                                        <td>{{ unit.num_living_rooms }}</td>
+                                        <td>{{ unit.num_stores }}</td>
+                                        <td>{{ unit.is_available_for_rent }}</td>
+                                        <td>
+                                            <a href="{% url 'unit_applied_tenants' unit.pk %}"
+                                               class="btn btn-success btn-sm">Applicants</a>
+                                            <a href="{% url 'unit_detail' unit.pk %}" class="btn btn-info btn-sm">View</a>
+                                            <a href="{% url 'unit_update' unit.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="{% url 'unit_delete' unit.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="11">No units found.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

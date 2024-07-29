@@ -1,5 +1,3 @@
-# properties/admin.py
-
 from django.contrib import admin
 
 from .models import (City, Country, Currency, Document, Property, State,

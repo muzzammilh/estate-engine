@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block title %}
+    Unit Detail
+{% endblock title %}
 {% load static %}
 {% block custom_css %}
     <link rel="stylesheet"
@@ -44,8 +47,10 @@
                 <p>
                     <strong>Rent Per Month:</strong> {{ unit.rent_per_month }}
                 </p>
-                <a href="{% url 'upload_documents' unit.id %}"
-                   class="btn btn-primary mt-3">Apply For Rent</a>
+                {% if user.role == user.TENANT %}
+                    <a href="{% url 'upload_documents' unit.id %}"
+                       class="btn btn-primary mt-3">Apply For Rent</a>
+                {% endif %}
             </div>
         </div>
     </div>

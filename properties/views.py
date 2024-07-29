@@ -7,12 +7,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  TemplateView, UpdateView)
+                                  UpdateView)
 
+from contracts.models import TenancyContract
 from gallery.forms import DocFormSet, ImageFormSet
 from gallery.models import Image
 
-from .forms import PropertyForm, TenantUnitFilterForm, UnitForm
+from .forms import (PropertyForm, TableUnitFilterForm, TenantUnitFilterForm,
+                    UnitForm)
 from .models import City, Document, Property, State, SubLocality, Unit
 
 
@@ -222,24 +224,6 @@ class AvailableUnitsView(ListView):
         return context
 
 
-def load_states(request):
-    country_id = request.GET.get('country_id')
-    states = State.objects.filter(country_id=country_id).order_by('name')
-    return JsonResponse(list(states.values('id', 'name')), safe=False)
-
-
-def load_cities(request):
-    state_id = request.GET.get('state_id')
-    cities = City.objects.filter(state_id=state_id).order_by('name')
-    return JsonResponse(list(cities.values('id', 'name')), safe=False)
-
-
-def load_sub_localities(request):
-    city_id = request.GET.get('city_id')
-    sub_localities = SubLocality.objects.filter(city_id=city_id).order_by('name')
-    return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
-
-
 # view for document uploads
 class UploadDocumentsView(View):
     DocFormSet = DocFormSet
@@ -290,14 +274,26 @@ class UploadDocumentsView(View):
 
 
 # view for the units user applied
-class UserAppliedUnitsView(TemplateView):
-    template_name = 'properties/user_applied_units.html'
+class TenantAppliedUnitsView(ListView):
+    template_name = 'properties/tenant_applied_units.html'
+    context_object_name = 'applied_units'
+    paginate_by = 20
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_queryset(self):
         user = self.request.user
+        filter_form = TableUnitFilterForm(self.request.GET)
 
         documents = Document.objects.filter(tenant=user)
+
+        if filter_form.is_valid():
+            property_id = filter_form.cleaned_data.get('property')
+            unit_id = filter_form.cleaned_data.get('unit')
+
+            if property_id:
+                documents = documents.filter(unit__property_id=property_id)
+
+            if unit_id:
+                documents = documents.filter(unit_id=unit_id)
 
         applied_units = [
             {
@@ -307,7 +303,12 @@ class UserAppliedUnitsView(TemplateView):
             for document in documents
         ]
 
-        context['applied_units'] = applied_units
+        return applied_units
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        filter_form = TableUnitFilterForm(self.request.GET)
+        context['filter_form'] = filter_form
         return context
 
 
@@ -348,7 +349,6 @@ class UnitAppliedTenantsView(ListView):
 class UpdateDocumentStatusView(View):
     def post(self, request, document_id, *args, **kwargs):
         status = request.POST.get('status')
-
         document = get_object_or_404(Document, id=document_id)
 
         if status == 'approved':
@@ -357,21 +357,131 @@ class UpdateDocumentStatusView(View):
                 message = "Another tenant has already been approved for this unit."
                 return JsonResponse({'message': message, 'status': 'error', 'new_status': document.status})
 
+            else:
+                if TenancyContract.objects.filter(unit=document.unit, tenant=document.tenant).exists():
+                    message = "You have already been approved for this unit."
+                    return JsonResponse({'message': message, 'status': 'error', 'new_status': document.status})
+
+                TenancyContract.objects.create(
+                    unit=document.unit,
+                    tenant=document.tenant,
+                    owner=document.unit.property.owner,
+                )
+                document.unit.is_available_for_rent = False
+                document.unit.resident = document.tenant
+                document.unit.save()
+
         document.status = status
         document.save()
-
         unit = document.unit
-        if status == 'approved':
-            if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
-                unit.is_available_for_rent = False
-            else:
-                unit.is_available_for_rent = False
-        elif status == 'rejected' or status == 'pending':
+        if status == 'rejected' or status == 'pending':
             if Document.objects.filter(unit=unit, status='approved').exclude(id=document.id).exists():
                 unit.is_available_for_rent = False
             else:
                 unit.is_available_for_rent = True
-        unit.save()
+                unit.resident = None
+            unit.save()
+
+            TenancyContract.objects.filter(unit=unit, tenant=document.tenant).delete()
 
         message = f"Document status updated to '{status}'."
         return JsonResponse({'message': message, 'status': 'success', 'new_status': status})
+
+
+# to dislay all units of owner
+class OwnerAllUnitsListView(ListView):
+    model = Unit
+    template_name = 'properties/owner_all_units.html'
+    context_object_name = 'units'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Unit.objects.filter(property__owner=self.request.user)
+        form = TableUnitFilterForm(self.request.GET)
+
+        if form.is_valid() and form.cleaned_data.get('property'):
+            queryset = queryset.filter(property=form.cleaned_data['property'])
+
+        if form.is_valid() and form.cleaned_data.get('unit'):
+            queryset = queryset.filter(id=form.cleaned_data['unit'].id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET, user=self.request.user)
+        return context
+
+
+# to display all unit that are not rented out
+class OwnerAvailableUnitsView(ListView):
+    model = Unit
+    template_name = 'properties/owner_available_units.html'
+    context_object_name = 'units'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=True)
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=self.request.user)
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('property'):
+            queryset = queryset.filter(property=self.filter_form.cleaned_data['property'])
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('unit'):
+            queryset = queryset.filter(id=self.filter_form.cleaned_data['unit'].id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET, user=self.request.user)
+        return context
+
+
+# to display all unit that are rented out
+class OwnerRentedOutUnitsView(ListView):
+    model = Unit
+    template_name = 'properties/owner_rentedout_units.html'
+    context_object_name = 'units'
+    paginate_by = 20
+
+    def get_queryset(self):
+        queryset = Unit.objects.filter(property__owner=self.request.user, is_available_for_rent=False)
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=self.request.user)
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('property'):
+            queryset = queryset.filter(property=self.filter_form.cleaned_data['property'])
+
+        if self.filter_form.is_valid() and self.filter_form.cleaned_data.get('unit'):
+            queryset = queryset.filter(id=self.filter_form.cleaned_data['unit'].id)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = TableUnitFilterForm(self.request.GET, user=self.request.user)
+        return context
+
+
+def load_states(request):
+    country_id = request.GET.get('country_id')
+    states = State.objects.filter(country_id=country_id).order_by('name')
+    return JsonResponse(list(states.values('id', 'name')), safe=False)
+
+
+def load_cities(request):
+    state_id = request.GET.get('state_id')
+    cities = City.objects.filter(state_id=state_id).order_by('name')
+    return JsonResponse(list(cities.values('id', 'name')), safe=False)
+
+
+def load_sub_localities(request):
+    city_id = request.GET.get('city_id')
+    sub_localities = SubLocality.objects.filter(city_id=city_id).order_by('name')
+    return JsonResponse(list(sub_localities.values('id', 'name')), safe=False)
+
+
+def load_units(request):
+    property_id = request.GET.get('property_id')
+    units = Unit.objects.filter(property_id=property_id).values('id', 'unit_number')
+    return JsonResponse(list(units), safe=False)

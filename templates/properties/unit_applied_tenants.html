@@ -10,10 +10,12 @@
 {% block content %}
     <div class="container mt-4">
         <div id="messages"></div>
-        <h2>Applied Tenants for Unit {{ unit.unit_number }} - {{ unit.property.name }}</h2>
         <div class="row">
             <div class="col-md-12">
-                <div class="card">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Applied Tenants for Unit {{ unit.unit_number }} - {{ unit.property.name }}</h2>
+                    </div>
                     <div class="card-body">
                         <table class="table table-bordered">
                             <thead class="thead-light">
@@ -63,7 +65,7 @@
                                     </tr>
                                 {% empty %}
                                     <tr>
-                                        <td colspan="4">No tenants applied for this unit yet.</td>
+                                        <td colspan="3">No tenants applied for this unit yet.</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

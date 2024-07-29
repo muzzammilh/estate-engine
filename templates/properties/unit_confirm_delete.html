@@ -1,10 +1,20 @@
 {% extends "base.html" %}
+{% block title %}
+    Unit Delete
+{% endblock title %}
 {% block content %}
-    <h2>Delete Unit</h2>
-    <p>Are you sure you want to delete Unit {{ unit.unit_number }} in {{ unit.property.name }}?</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Delete</button>
-    </form>
-    <a href="{% url 'property_detail' unit.property.pk %}">Cancel</a>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Delete Unit</h2>
+                <p class="card-text">Are you sure you want to delete Unit {{ unit.unit_number }} in {{ unit.property.name }}?</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <a href="{% url 'property_detail' unit.property.pk %}"
+                       class="btn btn-secondary ms-2">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

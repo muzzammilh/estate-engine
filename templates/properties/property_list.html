@@ -1,14 +1,35 @@
 {% extends "base.html" %}
+{% block title %}
+    My Properties
+{% endblock title %}
 {% block content %}
-    <h2>My Properties</h2>
-    <a href="{% url 'property_create' %}">Add Property</a>
-    <ul>
-        {% for property in object_list %}
-            <li>
-                <a href="{% url 'property_detail' property.pk %}">{{ property.name }}</a>
-                <a href="{% url 'property_update' property.pk %}">Edit</a>
-                <a href="{% url 'property_delete' property.pk %}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">My Properties</h2>
+                    <a href="{% url 'property_create' %}" class="btn btn-primary">Add Property</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for property in object_list %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ property.name }}</span>
+                            <div>
+                                <a href="{% url 'property_detail' property.pk %}"
+                                   class="btn btn-sm btn-info me-2">View</a>
+                                <a href="{% url 'property_update' property.pk %}"
+                                   class="btn btn-sm btn-warning me-2">Edit</a>
+                                <a href="{% url 'property_delete' property.pk %}"
+                                   class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No properties found.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Contract Detail
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="mb-4">Contract Detail</h2>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <button class="btn btn-primary mb-3" id="download-pdf">Download PDF</button>
+            </div>
+        </div>
+    </div>
+    <div id="contract-detail" class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3>Tenancy Contract</h3>
+                        <dl class="row">
+                            <dt class="col-sm-4">Unit:</dt>
+                            <dd class="col-sm-8">
+                                {{ contract.unit }}
+                            </dd>
+                            <dt class="col-sm-4">Tenant:</dt>
+                            <dd class="col-sm-8">
+                                {{ contract.tenant.email }}
+                            </dd>
+                            <dt class="col-sm-4">Owner:</dt>
+                            <dd class="col-sm-8">
+                                {{ contract.owner.email }}
+                            </dd>
+                            <dt class="col-sm-4">Start Date:</dt>
+                            <dd class="col-sm-8">
+                                {{ contract.start_date }}
+                            </dd>
+                            <dt class="col-sm-4">End Date:</dt>
+                            <dd class="col-sm-8">
+                                {{ contract.end_date }}
+                            </dd>
+                            <dt class="col-sm-4">Rent Agreed:</dt>
+                            <dd class="col-sm-8">
+                                {{ contract.rent_agreed }}
+                            </dd>
+                            <dt class="col-sm-4">Active:</dt>
+                            <dd class="col-sm-8">
+                                {% if contract.active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>Owner Detail</h3>
+                        <dl class="row">
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8">
+                                {{ contract.owner.email }}
+                            </dd>
+                            <dt class="col-sm-4">Role:</dt>
+                            <dd class="col-sm-8">
+                                Owner
+                            </dd>
+                            <dt class="col-sm-4">Owned Properties:</dt>
+                            <dd class="col-sm-8">
+                                <ul class="list-group">
+                                    {% for property in contract.owner.property_set.all %}
+                                        <li class="list-group-item">{{ property.name }} - {{ property.address }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-4">
+                        <h3>Tenant Detail</h3>
+                        <dl class="row">
+                            <dt class="col-sm-3">Email:</dt>
+                            <dd class="col-sm-9">
+                                {{ contract.tenant.email }}
+                            </dd>
+                            <dt class="col-sm-3">Role:</dt>
+                            <dd class="col-sm-9">
+                                Tenant
+                            </dd>
+                            <dt class="col-sm-3">Tenancy Contract:</dt>
+                            <dd class="col-sm-9">
+                                {{ contract.unit }} - {{ contract.start_date }} to {{ contract.end_date }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Property Details</h3>
+                        <dl class="row">
+                            <dt class="col-sm-4">Property Name:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.name }}
+                            </dd>
+                            <dt class="col-sm-4">Owner:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.owner.email }}
+                            </dd>
+                            <dt class="col-sm-4">Address:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.address }}
+                            </dd>
+                            <dt class="col-sm-4">Description:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.description }}
+                            </dd>
+                            <dt class="col-sm-4">Square Feet:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.square_feet }}
+                            </dd>
+                            <dt class="col-sm-4">Leased:</dt>
+                            <dd class="col-sm-8">
+                                {% if property.is_leased %}
+                                    <span class="badge bg-success">Yes</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No</span>
+                                {% endif %}
+                            </dd>
+                            <dt class="col-sm-4">Currency:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.currency }}
+                            </dd>
+                            <dt class="col-sm-4">Country:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.country.name }}
+                            </dd>
+                            <dt class="col-sm-4">State:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.state.name }}
+                            </dd>
+                            <dt class="col-sm-4">City:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.city.name }}
+                            </dd>
+                            <dt class="col-sm-4">Sub Locality:</dt>
+                            <dd class="col-sm-8">
+                                {{ property.sub_locality.name }}
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Unit Details</h3>
+                        <dl class="row">
+                            <dt class="col-sm-4">Unit Number:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.unit_number }}
+                            </dd>
+                            <dt class="col-sm-4">Description:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.description }}
+                            </dd>
+                            <dt class="col-sm-4">Number of Beds:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.num_beds }}
+                            </dd>
+                            <dt class="col-sm-4">Number of Bathrooms:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.num_bathrooms }}
+                            </dd>
+                            <dt class="col-sm-4">Number of Kitchens:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.num_kitchens }}
+                            </dd>
+                            <dt class="col-sm-4">Number of Living Rooms:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.num_living_rooms }}
+                            </dd>
+                            <dt class="col-sm-4">Number of Stores:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.num_stores }}
+                            </dd>
+                            <dt class="col-sm-4">Rent per Month:</dt>
+                            <dd class="col-sm-8">
+                                {{ unit.rent_per_month }}
+                            </dd>
+                            <dt class="col-sm-4">Available for Rent:</dt>
+                            <dd class="col-sm-8">
+                                {% if unit.is_available_for_rent %}
+                                    <span class="badge bg-success">Yes</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No</span>
+                                {% endif %}
+                            </dd>
+                            <dt class="col-sm-4">Resident:</dt>
+                            <dd class="col-sm-8">
+                                {% if unit.resident %}
+                                    {{ unit.resident.email }}
+                                {% else %}
+                                    Not Assigned
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    <script src="{% static 'js/pdf_print.js' %}"></script>
+{% endblock js %}

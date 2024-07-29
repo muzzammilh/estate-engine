@@ -3,5 +3,51 @@
     Owner Dashboard
 {% endblock title %}
 {% block content %}
-    <a href="{% url 'property_list' %}">List Properties</a>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Welcome, {{ user.email }}</h5>
+                        <p class="card-text">Click below to list all properties.</p>
+                        <a href="{% url 'property_list' %}" class="btn btn-primary">List Properties</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Properties</h5>
+                        <p class="card-text">{{ total_properties }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Units</h5>
+                        <p class="card-text">{{ total_units }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Tenants</h5>
+                        <p class="card-text">{{ total_tenants }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Tenants in Tenancy Contracts</h5>
+                        <p class="card-text">{{ tenants_in_contracts }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}

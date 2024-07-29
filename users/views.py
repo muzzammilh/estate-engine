@@ -1,4 +1,5 @@
 import logging
+from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth import login, update_session_auth_hash
@@ -7,9 +8,17 @@ from django.contrib.auth.views import (LoginView, LogoutView,
                                        PasswordResetCompleteView,
                                        PasswordResetConfirmView,
                                        PasswordResetView)
+from django.db import models
+from django.db.models import Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, FormView, TemplateView, UpdateView
+from django.views.generic import (CreateView, DetailView, FormView, ListView,
+                                  TemplateView, UpdateView)
+
+from contracts.models import TenancyContract
+from contracts.views import get_filtered_queryset
+from properties.forms import TableUnitFilterForm
+from properties.models import Document, Property, Unit
 
 from .forms import (CustomPasswordResetForm, CustomSetPasswordForm,
                     ProfilePasswordChangeForm, UserLoginForm, UserProfileForm,
@@ -87,12 +96,42 @@ class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'users/password_reset_complete.html'
 
 
-class OwnerDashboardView(TemplateView):
+class OwnerDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/owner_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        owner = self.request.user
+        context['user'] = owner
+        context['total_properties'] = Property.objects.filter(owner=owner).count()
+        context['total_units'] = Unit.objects.filter(property__owner=owner).count()
+        context['total_tenants'] = TenancyContract.objects.filter(unit__property__owner=owner).count()
+        context['tenants_in_contracts'] = TenancyContract.objects.filter(unit__property__owner=owner, active=True).count()
+        return context
 
 
 class TenantDashboardView(TemplateView):
     template_name = 'dashboard/tenant_dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tenant = self.request.user
+
+        context['user'] = tenant
+
+        rented_unit_count = Unit.objects.filter(resident=tenant).count()
+        context['rented_unit_count'] = rented_unit_count
+
+        total_rent_agreed = TenancyContract.objects.filter(
+            tenant=tenant, active=True
+        ).aggregate(
+            total_rent_agreed=models.Sum('rent_agreed')
+        )['total_rent_agreed'] or Decimal('0.00')
+
+        total_rent_agreed = "{:.3f}".format(total_rent_agreed)
+        context['total_rent_agreed'] = total_rent_agreed
+
+        return context
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
@@ -124,3 +163,68 @@ class PasswordChangeView(LoginRequiredMixin, FormView):
         update_session_auth_hash(self.request, user)
         messages.success(self.request, 'Your password has been changed successfully.')
         return super().form_valid(form)
+
+
+# just to show all approved tenants
+class ApprovedTenantsView(ListView):
+    template_name = 'users/approved_tenants.html'
+    context_object_name = 'approved_documents'
+    paginate_by = 20
+
+    def get_queryset(self):
+        owner = self.request.user
+        queryset = Document.objects.filter(
+            status='approved',
+            unit__property__owner=owner
+        ).select_related(
+            'tenant', 'unit', 'unit__property'
+        ).prefetch_related(
+            Prefetch('tenant', queryset=User.objects.only('id', 'first_name', 'last_name', 'email'))
+        )
+
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
+        if self.filter_form.is_valid():
+            queryset = get_filtered_queryset(queryset, self.request)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = self.filter_form
+        return context
+
+
+# to show all tanents
+class AllTenantsView(ListView):
+    template_name = 'users/all_tenants.html'
+    context_object_name = 'all_tenants'
+    paginate_by = 20
+
+    def get_queryset(self):
+        owner = self.request.user
+        queryset = Document.objects.filter(unit__property__owner=owner).select_related(
+            'tenant', 'unit', 'unit__property'
+        ).prefetch_related(
+            Prefetch('tenant', queryset=User.objects.only('id', 'first_name', 'last_name', 'email'))
+        )
+
+        self.filter_form = TableUnitFilterForm(self.request.GET, user=owner)
+        if self.filter_form.is_valid():
+            queryset = get_filtered_queryset(queryset, self.request)
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = self.filter_form
+        return context
+
+
+# to show profile
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'users/profile.html'
+    context_object_name = 'user'
+
+    def get_object(self, queryset=None):
+        return self.request.user

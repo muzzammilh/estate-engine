@@ -25,7 +25,7 @@
                             <i class="lni lni-grid-alt"></i>
                         </button>
                         <div class="sidebar-logo ms-3">
-                            <a href="#">Estate Engine</a>
+                            <a href="">Estate Engine</a>
                         </div>
                         <div class="ms-auto text-light">
                             <ul class="list-unstyled mb-0">
@@ -57,39 +57,161 @@
             <div class="wrapper d-flex">
                 <aside id="sidebar" class="expand">
                     <ul class="sidebar-nav">
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="lni lni-user"></i>
-                                <span>Profile</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="lni lni-agenda"></i>
-                                <span>Task</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#"
-                               class="sidebar-link collapsed has-dropdown"
-                               data-bs-toggle="collapse"
-                               data-bs-target="#auth"
-                               aria-expanded="false"
-                               aria-controls="auth">
-                                <i class="lni lni-protection"></i>
-                                <span>Auth</span>
-                            </a>
-                            <ul id="auth"
-                                class="sidebar-dropdown list-unstyled collapse"
-                                data-bs-parent="#sidebar">
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Login</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Register</a>
-                                </li>
-                            </ul>
-                        </li>
+                        {% if user.role == user.OWNER %}
+                            <li class="sidebar-item">
+                                <a href="{% url 'user_profile' %}" class="sidebar-link">
+                                    <i class="lni lni-user"></i>
+                                    <span>Profile</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'owner_dashboard' %}" class="sidebar-link">
+                                    <i class="lni lni-home"></i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#"
+                                   class="sidebar-link collapsed has-dropdown"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#properties-dropdown"
+                                   aria-expanded="false"
+                                   aria-controls="properties-dropdown">
+                                    <i class="lni lni-apartment"></i>
+                                    <span>Properties</span>
+                                </a>
+                                <ul id="properties-dropdown"
+                                    class="sidebar-dropdown list-unstyled collapse"
+                                    data-bs-parent="#sidebar">
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'property_list' %}" class="sidebar-link">All Properties</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#"
+                                   class="sidebar-link collapsed has-dropdown"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#units-dropdown"
+                                   aria-expanded="false"
+                                   aria-controls="units-dropdown">
+                                    <i class="lni lni-map-marker"></i>
+                                    <span>Units</span>
+                                </a>
+                                <ul id="units-dropdown"
+                                    class="sidebar-dropdown list-unstyled collapse"
+                                    data-bs-parent="#sidebar">
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'owner_available_units' %}" class="sidebar-link">Available Units</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'owner_rentedout_units' %}" class="sidebar-link">Rented Out Units</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'owner_all_units' %}" class="sidebar-link">All Units</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#"
+                                   class="sidebar-link collapsed has-dropdown"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#tenants-dropdown"
+                                   aria-expanded="false"
+                                   aria-controls="tenants-dropdown">
+                                    <i class="lni lni-users"></i>
+                                    <span>Tenants</span>
+                                </a>
+                                <ul id="tenants-dropdown"
+                                    class="sidebar-dropdown list-unstyled collapse"
+                                    data-bs-parent="#sidebar">
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'approved_tenants' %}" class="sidebar-link">Approved Tenants</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'all_tenants' %}" class="sidebar-link">All Tenants</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#"
+                                   class="sidebar-link collapsed has-dropdown"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#contract-dropdown"
+                                   aria-expanded="false"
+                                   aria-controls="contract-dropdown">
+                                    <i class="lni lni-book"></i>
+                                    <span>Contracts</span>
+                                </a>
+                                <ul id="contract-dropdown"
+                                    class="sidebar-dropdown list-unstyled collapse"
+                                    data-bs-parent="#sidebar">
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'active_contracts' %}" class="sidebar-link">Active Contracts</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'all_contracts' %}" class="sidebar-link">All Contracts</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                        {% if user.role == user.TENANT %}
+                            <li class="sidebar-item">
+                                <a href="{% url 'user_profile' %}" class="sidebar-link">
+                                    <i class="lni lni-user"></i>
+                                    <span>Profile</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'tenant_dashboard' %}" class="sidebar-link">
+                                    <i class="lni lni-home"></i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#"
+                                   class="sidebar-link collapsed has-dropdown"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#units-dropdown"
+                                   aria-expanded="false"
+                                   aria-controls="units-dropdown">
+                                    <i class="lni lni-map-marker"></i>
+                                    <span>Units</span>
+                                </a>
+                                <ul id="units-dropdown"
+                                    class="sidebar-dropdown list-unstyled collapse"
+                                    data-bs-parent="#sidebar">
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'available_units' %}" class="sidebar-link">Available Units</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'user_applied_units' %}" class="sidebar-link">Applied Units</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="#"
+                                   class="sidebar-link collapsed has-dropdown"
+                                   data-bs-toggle="collapse"
+                                   data-bs-target="#contract-dropdown"
+                                   aria-expanded="false"
+                                   aria-controls="contract-dropdown">
+                                    <i class="lni lni-book"></i>
+                                    <span>Your Contracts</span>
+                                </a>
+                                <ul id="contract-dropdown"
+                                    class="sidebar-dropdown list-unstyled collapse"
+                                    data-bs-parent="#sidebar">
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'tenant_active_contracts' user.id %}"
+                                           class="sidebar-link">Active Contracts</a>
+                                    </li>
+                                    <li class="sidebar-item">
+                                        <a href="{% url 'your_contracts' %}" class="sidebar-link">All Contracts</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
                         <li class="sidebar-item">
                             <a href="#"
                                class="sidebar-link collapsed has-dropdown"
@@ -154,6 +276,7 @@
         <script src="{% static 'js/popper.min.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/common.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
         {% block js %}
         {% endblock js %}
     </body>

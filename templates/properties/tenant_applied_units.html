@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Units Applied For
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Units You Applied For</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.property.label_tag }}
+                                {{ filter_form.property }}
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.unit.label_tag }}
+                                {{ filter_form.unit }}
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                        </div>
+                    </div>
+                </form>
+                {% if applied_units %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Owner</th>
+                                    <th>Property</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for unit_info in applied_units %}
+                                    <tr>
+                                        <td>{{ unit_info.unit.property.owner.email }}</td>
+                                        <td>{{ unit_info.unit.property }}</td>
+                                        <td>{{ unit_info.unit.unit_number }}</td>
+                                        <td>
+                                            {% if unit_info.status == 'approved' %}
+                                                <span class="badge bg-success">{{ unit_info.status }}</span>
+                                            {% elif unit_info.status == 'rejected' %}
+                                                <span class="badge bg-danger">{{ unit_info.status }}</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark">{{ unit_info.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% include "properties/pagination_controls.html" %}
+                {% else %}
+                    <p class="text-muted text-center">You haven't applied for any units yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    <script src="{% static 'js/basic_table_filter.js' %}"></script>
+{% endblock js %}

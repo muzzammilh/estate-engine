@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'config',
     'users',
     'properties',
-    'gallery'
+    'gallery',
+    'contracts',
 ]
 
 MIDDLEWARE = [

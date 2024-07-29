@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Approved Tenants
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Approved Tenants</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.property.label_tag }}
+                                {{ filter_form.property }}
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.unit.label_tag }}
+                                {{ filter_form.unit }}
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                        </div>
+                    </div>
+                </form>
+                {% if approved_documents %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Property</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                    <th>Contract</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for document in approved_documents %}
+                                    <tr>
+                                        <form>
+                                            {% csrf_token %}
+                                            <td>{{ document.tenant.email }}</td>
+                                            <td>{{ document.unit.property }}</td>
+                                            <td>
+                                                {{ document.unit.unit_number }}
+                                                <input type='hidden' name="unit_id" value="{{ document.unit.id }}">
+                                            </td>
+                                            <td>
+                                                <span style="background-color: #28a745;
+                                                             color: white;
+                                                             padding: 4px 8px;
+                                                             border-radius: 4px">{{ document.status }}</span>
+                                            </td>
+                                            <td>
+                                                <button type="submit"
+                                                        formaction="{% url 'create_contract' document.tenant.id %}"
+                                                        class="btn btn-outline-primary btn-sm">Make Contract</button>
+                                            </td>
+                                        </form>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% include "properties/pagination_controls.html" %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No approved tenants found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    <script src="{% static 'js/basic_table_filter.js' %}"></script>
+{% endblock js %}

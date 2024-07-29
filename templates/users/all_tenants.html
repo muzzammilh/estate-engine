@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    All Tenants
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">All Tenants</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.property.label_tag }}
+                                {{ filter_form.property }}
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                {{ filter_form.unit.label_tag }}
+                                {{ filter_form.unit }}
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                        </div>
+                    </div>
+                </form>
+                {% if all_tenants %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Property</th>
+                                    <th>Unit</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for document in all_tenants %}
+                                    <tr>
+                                        <form>
+                                            {% csrf_token %}
+                                            <td>{{ document.tenant.email }}</td>
+                                            <td>{{ document.unit.property }}</td>
+                                            <td>
+                                                {{ document.unit.unit_number }}
+                                                <input type='hidden' name="unit_id" value="{{ document.unit.id }}">
+                                            </td>
+                                            <td>
+                                                {% if document.status == 'approved' %}
+                                                    <span style="background-color: #28a745;
+                                                                 color: white;
+                                                                 padding: 4px 8px;
+                                                                 border-radius: 4px">Approved</span>
+                                                {% elif document.status == 'rejected' %}
+                                                    <span style="background-color: #dc3545;
+                                                                 color: white;
+                                                                 padding: 4px 8px;
+                                                                 border-radius: 4px">Rejected</span>
+                                                {% else %}
+                                                    <span style="background-color: #ffc107;
+                                                                 color: black;
+                                                                 padding: 4px 8px;
+                                                                 border-radius: 4px">Pending</span>
+                                                {% endif %}
+                                            </td>
+                                        </form>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% include "properties/pagination_controls.html" %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No tenants found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+{% block js %}
+    <script src="{% static 'js/basic_table_filter.js' %}"></script>
+{% endblock js %}

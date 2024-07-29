@@ -3,33 +3,45 @@
     Update Profile
 {% endblock title %}
 {% block content %}
-    <h2>Update Profile</h2>
-    <form method="post">
-        {% csrf_token %}
-        <fieldset>
-            <div>
-                <label for="{{ form.first_name.id_for_label }}" class="form-label mt-4">First Name</label>
-                <input type="text"
-                       name="first_name"
-                       class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
-                       id="{{ form.first_name.id_for_label }}"
-                       value="{{ form.first_name.value }}"
-                       placeholder="First Name"
-                       autocomplete="off" />
-                {% for error in form.first_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Profile Update</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <fieldset>
+                                <div class="mb-3">
+                                    <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name</label>
+                                    <input type="text"
+                                           name="first_name"
+                                           class="form-control {% if form.first_name.errors %}is-invalid{% endif %}"
+                                           id="{{ form.first_name.id_for_label }}"
+                                           value="{{ form.first_name.value }}"
+                                           placeholder="First Name"
+                                           autocomplete="off" />
+                                    {% for error in form.first_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name</label>
+                                    <input type="text"
+                                           name="last_name"
+                                           class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
+                                           id="{{ form.last_name.id_for_label }}"
+                                           value="{{ form.last_name.value }}"
+                                           placeholder="Last Name"
+                                           autocomplete="off" />
+                                    {% for error in form.last_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-4">Update Profile</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label for="{{ form.last_name.id_for_label }}" class="form-label mt-4">Last Name</label>
-                <input type="text"
-                       name="last_name"
-                       class="form-control {% if form.last_name.errors %}is-invalid{% endif %}"
-                       id="{{ form.last_name.id_for_label }}"
-                       value="{{ form.last_name.value }}"
-                       placeholder="Last Name"
-                       autocomplete="off" />
-                {% for error in form.last_name.errors %}<div class="invalid-feedback">{{ error }}</div>{% endfor %}
-            </div>
-            <button type="submit" class="btn btn-primary mt-4">Update Profile</button>
-        </fieldset>
-    </form>
+        </div>
+    </div>
 {% endblock content %}

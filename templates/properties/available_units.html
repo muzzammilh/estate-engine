@@ -1,35 +1,44 @@
 {% extends "base.html" %}
+{% block title %}
+    Available Units
+{% endblock title %}
 {% load static %}
 {% block js %}
     <script src="{% static 'js/cascade_dropdowns.js' %}"></script>
 {% endblock js %}
 {% block content %}
     <div class="container mt-4">
-        <h2>Available Units for Rent</h2>
-        <form method="get" class="mb-4">
-            <div class="row">
-                <div class="col-md-8">{{ filter_form.as_p }}</div>
-                <div class="col-md-4">
-                    <button type="submit" class="btn btn-primary btn-block">Filter</button>
-                </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Available Units for Rent</h2>
             </div>
-        </form>
-        <ul class="list-group">
-            {% for unit in units %}
-                <li class="list-group-item">
-                    <div>
-                        <h5 class="mb-1">
-                            <a href="{% url 'unit_detail' unit.pk %}" class="text-decoration-none">{{ unit.unit_number }}</a>
-                            - {{ unit.property.name }}
-                        </h5>
-                        <p class="mb-1">
-                            {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}
-                        </p>
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-8">{{ filter_form.as_p }}</div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                        </div>
                     </div>
-                </li>
-            {% empty %}
-                <li class="list-group-item">No units available for rent.</li>
-            {% endfor %}
-        </ul>
+                </form>
+                <ul class="list-group">
+                    {% for unit in units %}
+                        <li class="list-group-item">
+                            <div>
+                                <h5 class="mb-1">
+                                    <a href="{% url 'unit_detail' unit.pk %}" class="text-decoration-none">{{ unit.unit_number }}</a>
+                                    - {{ unit.property.name }}
+                                </h5>
+                                <p class="mb-1">
+                                    {{ unit.property.sub_locality.name }}, {{ unit.property.city.name }}, {{ unit.property.state.name }}, {{ unit.property.country.name }}
+                                </p>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item">No units available for rent.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 {% endblock content %}
