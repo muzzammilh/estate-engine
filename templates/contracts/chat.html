@@ -3,7 +3,6 @@
 {% block title %}
     Chat
 {% endblock title %}
-
 {% block content %}
     <div class="container mt-4">
         <div class="card shadow-sm">
@@ -17,19 +16,25 @@
                 </h2>
             </div>
             <div class="card-body">
-                <div class="chat-box mb-3" id="chat-box" style="height: 400px; overflow-y: auto;">
+                <div class="chat-box mb-3"
+                     id="chat-box"
+                     style="height: 400px;
+                            overflow-y: auto">
                     {% for message in chat_messages %}
                         <div class="d-flex mb-3 {% if message.sender == user %}justify-content-end{% else %}justify-content-start{% endif %}">
                             <div class="message p-2 rounded {% if message.sender == user %}bg-primary text-white{% else %}bg-light{% endif %}">
                                 <p class="mb-1">{{ message.content }}</p>
-                                <small class="{% if message.sender == user %}text-white{% else %}text-muted{% endif %}" style="text-align: {% if message.sender == user %}right{% else %}left{% endif %};">
+                                <small class="{% if message.sender == user %}text-white{% else %}text-muted{% endif %}"
+                                       style="text-align: {% if message.sender == user %}right{% else %}left{% endif %}">
                                     {{ message.timestamp|date:"H:i" }}
                                 </small>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
-                <form id="message-form" method="post" action="{% url 'send_message' tenant.id %}">
+                <form id="message-form"
+                      method="post"
+                      action="{% if user.role == user.OWNER %}{% url 'send_message' tenant.id %}{% else %}{% url 'send_message' owner.id %}{% endif %}">
                     {% csrf_token %}
                     <div class="input-group">
                         {{ form.content }}
@@ -40,7 +45,6 @@
         </div>
     </div>
 {% endblock content %}
-
 {% block js %}
     <script src="{% static 'js/chat.js' %}"></script>
 {% endblock js %}

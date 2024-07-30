@@ -1,10 +1,12 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
 from django.views.generic import DetailView, ListView
 
 from properties.forms import TableUnitFilterForm
 from users.models import User
 
-from .models import TenancyContract
+from .forms import MessageForm
+from .models import Message, TenancyContract
 from .views import get_filtered_queryset
 
 
@@ -55,3 +57,32 @@ class ContractDetailView(DetailView):
         context['unit'] = contract.unit
         context['property'] = contract.unit.property
         return context
+
+
+# chatting from tenant side
+class TenantChatView(View):
+    template_name = 'contracts/chat.html'
+
+    def get(self, request, owner_id):
+        owner = get_object_or_404(User, id=owner_id)
+        messages = Message.objects.filter(
+            sender__in=[request.user, owner],
+            receiver__in=[request.user, owner]
+        ).order_by('timestamp')
+        form = MessageForm()
+        return render(request, self.template_name, {
+            'tenant': request.user,
+            'chat_messages': messages,
+            'form': form,
+            'owner': owner,
+        })
+
+    def post(self, request, owner_id):
+        owner = get_object_or_404(User, id=owner_id)
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.receiver = owner
+            message.save()
+        return redirect('tenant_chat', owner_id=owner_id)

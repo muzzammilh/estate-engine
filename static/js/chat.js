@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
       body: formData,
       headers: {
         "X-Requested-With": "XMLHttpRequest",
-        "X-CSRFToken": formData.get("csrfmiddlewaretoken"), 
+        "X-CSRFToken": formData.get("csrfmiddlewaretoken"),
       },
     })
       .then((response) => {

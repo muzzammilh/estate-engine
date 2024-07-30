@@ -4,8 +4,8 @@ from .contract_views import (ActiveContractsView, AllContractsView,
                              ContractDeleteView, ContractUpdateView,
                              TenancyContractCreateView)
 from .tenant_views import (ContractDetailView, TenantActiveContractsView,
-                           TenantContractsView)
-from .views import OwnerChatView, SendMessageView, TenantChatView
+                           TenantChatView, TenantContractsView)
+from .views import OwnerChatView, OwnerMessagesView, SendMessageView
 
 urlpatterns = [
     path('create-contract/<int:tenant_id>/', TenancyContractCreateView.as_view(), name='create_contract'),
@@ -19,4 +19,5 @@ urlpatterns = [
     path('owner_chat/<int:tenant_id>/', OwnerChatView.as_view(), name='owner_chat'),
     path('tenant_chat/<int:owner_id>/', TenantChatView.as_view(), name='tenant_chat'),
     path('send_message/<int:tenant_id>/', SendMessageView.as_view(), name='send_message'),
+    path('owner_messages/', OwnerMessagesView.as_view(), name='owner_messages'),
 ]

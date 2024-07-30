@@ -154,6 +154,12 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'owner_messages' %}" class="sidebar-link">
+                                    <i class="lni lni-envelope"></i>
+                                    <span>Messages</span>
+                                </a>
+                            </li>
                         {% endif %}
                         {% if user.role == user.TENANT %}
                             <li class="sidebar-item">
@@ -212,12 +218,6 @@
                                 </ul>
                             </li>
                         {% endif %}
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">
-                                <i class="lni lni-envelope"></i>
-                                <span>Messages</span>
-                            </a>
-                        </li>
                         <li class="sidebar-item">
                             <a href="#"
                                class="sidebar-link collapsed has-dropdown"
