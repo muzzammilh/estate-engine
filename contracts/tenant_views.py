@@ -105,15 +105,15 @@ class TenantMessagesView(LoginRequiredMixin, ListView):
         search_query = self.request.GET.get('search', '').strip()
 
         messages = Message.objects.filter(
+            Q(sender=user) | Q(receiver=user),
             Q(sender__email__icontains=search_query) |
-            Q(receiver__email__icontains=search_query),
-            Q(sender=user) | Q(receiver=user)
+            Q(receiver__email__icontains=search_query)
         ).distinct().select_related('sender', 'receiver')
 
         unique_conversations = {}
         for message in messages:
-            key = message.receiver.id if message.receiver.role == User.OWNER else message.sender.id
-            if key not in unique_conversations:
+            key = (message.sender.id, message.receiver.id) if message.sender != user else (message.receiver.id, message.sender.id)
+            if key not in unique_conversations or unique_conversations[key].timestamp < message.timestamp:
                 unique_conversations[key] = message
 
         return unique_conversations.values()
@@ -129,7 +129,6 @@ class TenantMessagesView(LoginRequiredMixin, ListView):
             read=False
         ).values_list('id', flat=True)
         context['unread_message_ids'] = list(unread_messages)
-
         return context
 
 

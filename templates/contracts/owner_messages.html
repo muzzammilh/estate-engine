@@ -45,9 +45,11 @@
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'owner_chat' message.sender.id %}"
-                                                       class="btn btn-success btn-sm">
+                                                       class="btn btn-success btn-sm position-relative">
                                                         View Messages
-                                                        {% if message.id in unread_message_ids %}<span class="badge badge-danger">New</span>{% endif %}
+                                                        {% if message.id in unread_message_ids %}
+                                                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle p-1">New</span>
+                                                        {% endif %}
                                                     </a>
                                                 </td>
                                             </tr>
@@ -60,9 +62,11 @@
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'owner_chat' contract.tenant.id %}"
-                                                       class="btn btn-success btn-sm">
+                                                       class="btn btn-success btn-sm position-relative">
                                                         View Messages
-                                                        {% if message.id in unread_message_ids %}<span class="badge badge-danger">New</span>{% endif %}
+                                                        {% if message.id in unread_message_ids %}
+                                                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle p-1">New</span>
+                                                        {% endif %}
                                                     </a>
                                                 </td>
                                             </tr>

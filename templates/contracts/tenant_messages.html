@@ -45,9 +45,11 @@
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'tenant_chat' message.sender.id %}"
-                                                       class="btn btn-success btn-sm">
+                                                       class="btn btn-success btn-sm position-relative">
                                                         View Messages
-                                                        {% if message.id in unread_message_ids %}<span class="badge badge-danger">New</span>{% endif %}
+                                                        {% if message.id in unread_message_ids %}
+                                                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle p-1">New</span>
+                                                        {% endif %}
                                                     </a>
                                                 </td>
                                             </tr>
@@ -59,10 +61,12 @@
                                                     <a href="{% url 'owner_detail' message.receiver.id %}">{{ message.receiver.email }}</a>
                                                 </td>
                                                 <td>
-                                                    <a href="{% url 'tenant_chat' message.receiver.id %}"
-                                                       class="btn btn-success btn-sm">
+                                                    <a href="{% url 'tenant_chat' message.owner.id %}"
+                                                       class="btn btn-success btn-sm position-relative">
                                                         View Messages
-                                                        {% if message.id in unread_message_ids %}<span class="badge badge-danger">New</span>{% endif %}
+                                                        {% if message.id in unread_message_ids %}
+                                                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle p-1">New</span>
+                                                        {% endif %}
                                                     </a>
                                                 </td>
                                             </tr>
