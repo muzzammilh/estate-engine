@@ -41,9 +41,7 @@
                                         {% with contract=message.sender.tenancy_contracts.first %}
                                             <tr>
                                                 <td>
-                                                    <a href="{% url 'owner_detail' message.sender.id %}">
-                                                        {{ message.sender.email }}
-                                                    </a>
+                                                    <a href="{% url 'owner_detail' message.sender.id %}">{{ message.sender.email }}</a>
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'tenant_chat' message.sender.id %}"
@@ -55,12 +53,10 @@
                                         {% with contract=message.receiver.tenancy_contracts.first %}
                                             <tr>
                                                 <td>
-                                                    <a href="{% url 'owner_detail' message.receiver.id %}">
-                                                        {{ message.receiver.email }}
-                                                    </a>
+                                                    <a href="{% url 'owner_detail' message.receiver.id %}">{{ message.receiver.email }}</a>
                                                 </td>
                                                 <td>
-                                                    <a href="{% url 'tenant_chat' contract.owner.id %}"
+                                                    <a href="{% url 'tenant_chat' message.receiver.id %}"
                                                        class="btn btn-success btn-sm">View Messages</a>
                                                 </td>
                                             </tr>

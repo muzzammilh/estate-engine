@@ -64,6 +64,10 @@ class OwnerChatView(View):
             sender__in=[request.user, tenant],
             receiver__in=[request.user, tenant]
         ).order_by('timestamp')
+
+        unread_messages = messages.filter(receiver=request.user, read=False)
+        unread_messages.update(read=True)
+
         form = MessageForm()
         return render(request, self.template_name, {
             'tenant': tenant,
@@ -93,15 +97,15 @@ class OwnerMessagesView(LoginRequiredMixin, ListView):
         search_query = self.request.GET.get('search', '').strip()
 
         messages = Message.objects.filter(
+            Q(sender=user) | Q(receiver=user),
             Q(sender__email__icontains=search_query) |
-            Q(receiver__email__icontains=search_query),
-            Q(sender=user) | Q(receiver=user)
-        ).distinct().select_related('sender', 'receiver')
+            Q(receiver__email__icontains=search_query)
+        ).select_related('sender', 'receiver').order_by('timestamp')
 
         unique_conversations = {}
         for message in messages:
-            key = message.sender.id if message.sender.role == User.TENANT else message.receiver.id
-            if key not in unique_conversations:
+            key = (message.sender.id, message.receiver.id) if message.sender != user else (message.receiver.id, message.sender.id)
+            if key not in unique_conversations or unique_conversations[key].timestamp < message.timestamp:
                 unique_conversations[key] = message
 
         return unique_conversations.values()
@@ -111,6 +115,12 @@ class OwnerMessagesView(LoginRequiredMixin, ListView):
         context['contracts'] = TenancyContract.objects.filter(
             owner=self.request.user
         ).select_related('tenant', 'unit', 'unit__property')
+
+        unread_messages = Message.objects.filter(
+            receiver=self.request.user,
+            read=False
+        ).values_list('id', flat=True)
+        context['unread_message_ids'] = list(unread_messages)
         return context
 
 

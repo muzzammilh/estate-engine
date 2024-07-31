@@ -8,7 +8,6 @@
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h2 class="mb-0">Owner Details</h2>
-                
             </div>
             <div class="card-body">
                 <div class="row mb-3">
@@ -27,15 +26,14 @@
                         <ul class="list-group">
                             {% for property in properties %}
                                 <li class="list-group-item">
-                                    <strong>Property:</strong> {{ property.name }} <br>
+                                    <strong>Property:</strong> {{ property.name }}
+                                    <br>
                                     <strong>Units:</strong>
-                                    
-                                        {% for unit in property.units.all %}
-                                            <span class="me-2">{{ unit.unit_number }}</span>
-                                        {% empty %}
-                                            <span>No units available.</span>
-                                        {% endfor %}
-                                    
+                                    {% for unit in property.units.all %}
+                                        <span class="me-2">{{ unit.unit_number }}</span>
+                                    {% empty %}
+                                        <span>No units available.</span>
+                                    {% endfor %}
                                 </li>
                             {% empty %}
                                 <li class="list-group-item">No properties owned.</li>

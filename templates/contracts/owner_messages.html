@@ -45,7 +45,10 @@
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'owner_chat' message.sender.id %}"
-                                                       class="btn btn-success btn-sm">View Messages</a>
+                                                       class="btn btn-success btn-sm">
+                                                        View Messages
+                                                        {% if message.id in unread_message_ids %}<span class="badge badge-danger">New</span>{% endif %}
+                                                    </a>
                                                 </td>
                                             </tr>
                                         {% endwith %}
@@ -57,7 +60,10 @@
                                                 </td>
                                                 <td>
                                                     <a href="{% url 'owner_chat' contract.tenant.id %}"
-                                                       class="btn btn-success btn-sm">View Messages</a>
+                                                       class="btn btn-success btn-sm">
+                                                        View Messages
+                                                        {% if message.id in unread_message_ids %}<span class="badge badge-danger">New</span>{% endif %}
+                                                    </a>
                                                 </td>
                                             </tr>
                                         {% endwith %}
@@ -77,6 +83,3 @@
         </div>
     </div>
 {% endblock content %}
-{% block js %}
-    <script src="{% static 'js/basic_table_filter.js' %}"></script>
-{% endblock js %}
