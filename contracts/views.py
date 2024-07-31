@@ -65,7 +65,7 @@ class OwnerChatView(View):
             receiver__in=[request.user, tenant]
         ).order_by('timestamp')
 
-        unread_messages = messages.filter(receiver=request.user, read=False)
+        unread_messages = messages.filter(sender=tenant, receiver=request.user, read=False)
         unread_messages.update(read=True)
 
         form = MessageForm()

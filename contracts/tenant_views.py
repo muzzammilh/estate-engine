@@ -71,6 +71,10 @@ class TenantChatView(View):
             sender__in=[request.user, owner],
             receiver__in=[request.user, owner]
         ).order_by('timestamp')
+
+        unread_messages = messages.filter(sender=owner, receiver=request.user, read=False)
+        unread_messages.update(read=True)
+
         form = MessageForm()
         return render(request, self.template_name, {
             'tenant': request.user,
@@ -119,6 +123,13 @@ class TenantMessagesView(LoginRequiredMixin, ListView):
         context['contracts'] = TenancyContract.objects.filter(
             tenant=self.request.user
         ).select_related('owner', 'unit', 'unit__property')
+
+        unread_messages = Message.objects.filter(
+            receiver=self.request.user,
+            read=False
+        ).values_list('id', flat=True)
+        context['unread_message_ids'] = list(unread_messages)
+
         return context
 
 
