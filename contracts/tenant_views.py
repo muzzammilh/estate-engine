@@ -1,3 +1,5 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import DetailView, ListView
@@ -86,3 +88,42 @@ class TenantChatView(View):
             message.receiver = owner
             message.save()
         return redirect('tenant_chat', owner_id=owner_id)
+
+
+# messages for tennat side
+class TenantMessagesView(LoginRequiredMixin, ListView):
+    model = Message
+    template_name = 'contracts/tenant_messages.html'
+    context_object_name = 'conversations'
+
+    def get_queryset(self):
+        user = self.request.user
+        search_query = self.request.GET.get('search', '').strip()
+
+        messages = Message.objects.filter(
+            Q(sender__email__icontains=search_query) |
+            Q(receiver__email__icontains=search_query),
+            Q(sender=user) | Q(receiver=user)
+        ).distinct().select_related('sender', 'receiver')
+
+        unique_conversations = {}
+        for message in messages:
+            key = message.receiver.id if message.receiver.role == User.OWNER else message.sender.id
+            if key not in unique_conversations:
+                unique_conversations[key] = message
+
+        return unique_conversations.values()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['contracts'] = TenancyContract.objects.filter(
+            tenant=self.request.user
+        ).select_related('owner', 'unit', 'unit__property')
+        return context
+
+
+# for tenant detail
+class TenantDetailView(DetailView):
+    model = User
+    template_name = 'contracts/tenant_detail.html'
+    context_object_name = 'tenant'

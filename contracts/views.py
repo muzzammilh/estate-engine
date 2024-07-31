@@ -3,8 +3,9 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-from django.views.generic import ListView
+from django.views.generic import DetailView, ListView
 
+from properties.models import Property
 from users.models import User
 
 from .forms import MessageForm
@@ -110,4 +111,16 @@ class OwnerMessagesView(LoginRequiredMixin, ListView):
         context['contracts'] = TenancyContract.objects.filter(
             owner=self.request.user
         ).select_related('tenant', 'unit', 'unit__property')
+        return context
+
+
+# for owner  detail
+class OwnerDetailView(DetailView):
+    model = User
+    template_name = 'contracts/owner_detail.html'
+    context_object_name = 'owner'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['properties'] = Property.objects.filter(owner=self.object)
         return context

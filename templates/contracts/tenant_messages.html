@@ -17,7 +17,7 @@
                                 <input type="text"
                                        name="search"
                                        class="form-control"
-                                       placeholder="Search by tenant email"
+                                       placeholder="Search by owner email"
                                        value="{{ request.GET.search }}">
                             </div>
                         </div>
@@ -31,20 +31,22 @@
                         <table class="table table-bordered table-hover">
                             <thead class="thead-dark">
                                 <tr>
-                                    <th>Tenant</th>
-                                    <th>Message</th>
+                                    <th>Owner</th>
+                                    <th class="border-right">Message</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for message in conversations %}
-                                    {% if message.sender.role == message.sender.TENANT %}
+                                    {% if message.sender.role == message.sender.OWNER %}
                                         {% with contract=message.sender.tenancy_contracts.first %}
                                             <tr>
                                                 <td>
-                                                    <a href="{% url 'tenant_detail' message.sender.id %}">{{ message.sender.email }}</a>
+                                                    <a href="{% url 'owner_detail' message.sender.id %}">
+                                                        {{ message.sender.email }}
+                                                    </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{% url 'owner_chat' message.sender.id %}"
+                                                    <a href="{% url 'tenant_chat' message.sender.id %}"
                                                        class="btn btn-success btn-sm">View Messages</a>
                                                 </td>
                                             </tr>
@@ -53,10 +55,12 @@
                                         {% with contract=message.receiver.tenancy_contracts.first %}
                                             <tr>
                                                 <td>
-                                                    <a href="{% url 'tenant_detail' message.receiver.id %}">{{ message.receiver.email }}</a>
+                                                    <a href="{% url 'owner_detail' message.receiver.id %}">
+                                                        {{ message.receiver.email }}
+                                                    </a>
                                                 </td>
                                                 <td>
-                                                    <a href="{% url 'owner_chat' contract.tenant.id %}"
+                                                    <a href="{% url 'tenant_chat' contract.owner.id %}"
                                                        class="btn btn-success btn-sm">View Messages</a>
                                                 </td>
                                             </tr>
@@ -77,6 +81,3 @@
         </div>
     </div>
 {% endblock content %}
-{% block js %}
-    <script src="{% static 'js/basic_table_filter.js' %}"></script>
-{% endblock js %}
