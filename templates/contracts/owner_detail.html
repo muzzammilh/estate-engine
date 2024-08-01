@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Owner Details
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Owner Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4 class="text-secondary">Name:</h4>
+                        <p class="lead">{{ owner.first_name }} {{ owner.last_name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="text-secondary">Email:</h4>
+                        <p class="lead">{{ owner.email }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="text-secondary">Properties:</h4>
+                        <ul class="list-group">
+                            {% for property in properties %}
+                                <li class="list-group-item">
+                                    <strong>Property:</strong> {{ property.name }}
+                                    <br>
+                                    <strong>Units:</strong>
+                                    {% for unit in property.units.all %}
+                                        <span class="me-2">{{ unit.unit_number }}</span>
+                                    {% empty %}
+                                        <span>No units available.</span>
+                                    {% endfor %}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No properties owned.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

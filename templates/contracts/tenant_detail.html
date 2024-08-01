@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}
+    Tenant Details
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Tenant Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h4 class="text-secondary">Name:</h4>
+                        <p class="lead">{{ tenant.first_name }} {{ tenant.last_name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="text-secondary">Email:</h4>
+                        <p class="lead">{{ tenant.email }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="text-secondary">Units Rented:</h4>
+                        <ul class="list-group">
+                            {% for contract in tenant.tenancy_contracts.all %}
+                                <li class="list-group-item">
+                                    <strong>Unit:</strong> {{ contract.unit }}
+                                    <br>
+                                    <strong>Rent:</strong> {{ contract.rent_agreed }}
+                                    <br>
+                                    <strong>Start Date:</strong> {{ contract.start_date }}
+                                    <br>
+                                    <strong>End Date:</strong> {{ contract.end_date }}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No units rented.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

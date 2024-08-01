@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Messages
+{% endblock title %}
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Messages</h2>
+            </div>
+            <div class="card-body">
+                <form method="get" class="mb-4">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <input type="text"
+                                       name="search"
+                                       class="form-control"
+                                       placeholder="Search by tenant email"
+                                       value="{{ request.GET.search }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary btn-block">Search</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    {% if conversations %}
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Tenant</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for message in conversations %}
+                                    {% if message.sender.role == message.sender.TENANT %}
+                                        {% with contract=message.sender.tenancy_contracts.first %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{% url 'tenant_detail' message.sender.id %}">{{ message.sender.email }}</a>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'owner_chat' message.sender.id %}"
+                                                       class="btn btn-success btn-sm position-relative">
+                                                        View Messages
+                                                        {% if message.id in unread_message_ids %}
+                                                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle p-1">New</span>
+                                                        {% endif %}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endwith %}
+                                    {% else %}
+                                        {% with contract=message.receiver.tenancy_contracts.first %}
+                                            <tr>
+                                                <td>
+                                                    <a href="{% url 'tenant_detail' message.receiver.id %}">{{ message.receiver.email }}</a>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'owner_chat' contract.tenant.id %}"
+                                                       class="btn btn-success btn-sm position-relative">
+                                                        View Messages
+                                                        {% if message.id in unread_message_ids %}
+                                                            <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle p-1">New</span>
+                                                        {% endif %}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endwith %}
+                                    {% endif %}
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="text-center">No conversations found.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-center">No conversations found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
