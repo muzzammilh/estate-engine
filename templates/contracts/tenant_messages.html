@@ -61,7 +61,7 @@
                                                     <a href="{% url 'owner_detail' message.receiver.id %}">{{ message.receiver.email }}</a>
                                                 </td>
                                                 <td>
-                                                    <a href="{% url 'tenant_chat' message.owner.id %}"
+                                                    <a href="{% url 'tenant_chat' message.receiver.id %}"
                                                        class="btn btn-success btn-sm position-relative">
                                                         View Messages
                                                         {% if message.id in unread_message_ids %}

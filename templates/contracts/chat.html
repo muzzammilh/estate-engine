@@ -6,7 +6,7 @@
 {% block content %}
     <div class="container mt-4">
         <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h2 class="mb-0">
                     {% if user.role == user.OWNER %}
                         Chat with {{ tenant.email }}
@@ -14,6 +14,10 @@
                         Chat with {{ owner.email }}
                     {% endif %}
                 </h2>
+                <a href="{% if user.role == user.OWNER %}{% url 'owner_messages' %}{% else %}{% url 'tenant_messages' %}{% endif %}"
+                   class="btn btn-primary">
+                    <span class="text-white" style="font-size: 2.5rem;">&times;</span>
+                </a>
             </div>
             <div class="card-body">
                 <div class="chat-box mb-3"
