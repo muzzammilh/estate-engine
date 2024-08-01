@@ -82,12 +82,8 @@ def get_user_by_id(user_id):
 
 # just for sending messages and ajax
 class SendMessageView(View):
-    def post(self, request, tenant_id):
-        if request.user.role == User.OWNER:
-            receiver = get_object_or_404(User, id=tenant_id)
-        else:
-            receiver = get_object_or_404(User, id=tenant_id)
-
+    def post(self, request, receiver_id):
+        receiver = get_object_or_404(User, id=receiver_id)
         form = MessageForm(request.POST)
 
         if form.is_valid():
