@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic import DetailView, ListView
@@ -9,7 +8,8 @@ from users.models import User
 
 from .forms import MessageForm
 from .models import Message, TenancyContract
-from .views import get_filtered_queryset
+from .views import (get_chat_messages, get_filtered_queryset, get_user_by_id,
+                    get_user_context_data, get_user_messages)
 
 
 # to show active contracts of the tenant
@@ -66,14 +66,8 @@ class TenantChatView(View):
     template_name = 'contracts/chat.html'
 
     def get(self, request, owner_id):
-        owner = get_object_or_404(User, id=owner_id)
-        messages = Message.objects.filter(
-            sender__in=[request.user, owner],
-            receiver__in=[request.user, owner]
-        ).order_by('timestamp')
-
-        unread_messages = messages.filter(sender=owner, receiver=request.user, read=False)
-        unread_messages.update(read=True)
+        owner = get_user_by_id(owner_id)
+        messages = get_chat_messages(request.user, owner)
 
         form = MessageForm()
         return render(request, self.template_name, {
@@ -84,14 +78,15 @@ class TenantChatView(View):
         })
 
     def post(self, request, owner_id):
-        owner = get_object_or_404(User, id=owner_id)
+        owner = get_user_by_id(owner_id)
         form = MessageForm(request.POST)
         if form.is_valid():
             message = form.save(commit=False)
             message.sender = request.user
             message.receiver = owner
             message.save()
-        return redirect('tenant_chat', owner_id=owner_id)
+            return redirect('tenant_chat', owner_id=owner_id)
+        return self.get(request, owner_id)
 
 
 # messages for tennat side
@@ -101,34 +96,12 @@ class TenantMessagesView(LoginRequiredMixin, ListView):
     context_object_name = 'conversations'
 
     def get_queryset(self):
-        user = self.request.user
         search_query = self.request.GET.get('search', '').strip()
-
-        messages = Message.objects.filter(
-            Q(sender=user) | Q(receiver=user),
-            Q(sender__email__icontains=search_query) |
-            Q(receiver__email__icontains=search_query)
-        ).distinct().select_related('sender', 'receiver')
-
-        unique_conversations = {}
-        for message in messages:
-            key = (message.sender.id, message.receiver.id) if message.sender != user else (message.receiver.id, message.sender.id)
-            if key not in unique_conversations or unique_conversations[key].timestamp < message.timestamp:
-                unique_conversations[key] = message
-
-        return unique_conversations.values()
+        return get_user_messages(self.request.user, search_query)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['contracts'] = TenancyContract.objects.filter(
-            tenant=self.request.user
-        ).select_related('owner', 'unit', 'unit__property')
-
-        unread_messages = Message.objects.filter(
-            receiver=self.request.user,
-            read=False
-        ).values_list('id', flat=True)
-        context['unread_message_ids'] = list(unread_messages)
+        context.update(get_user_context_data(self.request.user, is_owner=False))
         return context
 
 
