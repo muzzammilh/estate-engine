@@ -154,6 +154,12 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'owner_messages' %}" class="sidebar-link">
+                                    <i class="lni lni-envelope"></i>
+                                    <span>Messages</span>
+                                </a>
+                            </li>
                         {% endif %}
                         {% if user.role == user.TENANT %}
                             <li class="sidebar-item">
@@ -210,6 +216,12 @@
                                         <a href="{% url 'your_contracts' %}" class="sidebar-link">All Contracts</a>
                                     </li>
                                 </ul>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{% url 'tenant_messages' %}" class="sidebar-link">
+                                    <i class="lni lni-envelope"></i>
+                                    <span>Messages</span>
+                                </a>
                             </li>
                         {% endif %}
                         <li class="sidebar-item">
